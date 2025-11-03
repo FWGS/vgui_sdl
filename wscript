@@ -30,7 +30,7 @@ def configure(conf):
 
 def build(bld):
 	bld.program(
-		source='sdl_app.cpp',
+		source=bld.path.ant_glob('*.cpp'),
 		target='vgui_test',
 		include='.',
 		use='VGUI SDL3',
