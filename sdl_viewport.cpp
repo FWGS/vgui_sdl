@@ -1,5 +1,6 @@
 #include "vgui_sdl.h"
 #include <VGUI_Desktop.h>
+#include <VGUI_DesktopIcon.h>
 
 class Viewport
 {
@@ -37,6 +38,11 @@ public:
 		rootpanel->addChild( desktop );
 	}
 
+	void AddIcon( DesktopIcon *di )
+	{
+		desktop->addIcon( di );
+	}
+
 	~Viewport()
 	{
 		rootpanel->removeAllChildren();
@@ -54,6 +60,8 @@ static Viewport *viewport;
 void CreateViewport( Panel *rootpanel )
 {
 	viewport = new Viewport( rootpanel );
+
+	viewport->AddIcon( CreateLabelTest( ));
 }
 
 void DeleteViewport()

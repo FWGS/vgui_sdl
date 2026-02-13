@@ -3,6 +3,7 @@
 #include <SDL3/SDL.h>
 #include <VGUI.h>
 #include <VGUI_App.h>
+#include <VGUI_DesktopIcon.h>
 #include <VGUI_Font.h>
 #include <VGUI_Panel.h>
 #include <VGUI_SurfaceBase.h>
@@ -84,3 +85,5 @@ private:
 
 void CreateViewport( Panel *rootpanel );
 void DestroyViewport();
+
+DesktopIcon *CreateLabelTest();
