@@ -142,6 +142,11 @@ private:
 void EventServer_Start( void );
 
 //
+// controls/button_test.cpp
+//
+DesktopIcon *CreateButtonTest();
+
+//
 // controls/label_test.cpp
 //
 DesktopIcon *CreateLabelTest();

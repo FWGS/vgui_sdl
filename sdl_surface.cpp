@@ -299,8 +299,8 @@ void SDLSurface::drawSetTextureRGBA( int id, const char *rgba, int wide, int tal
 
 #if 0
 	char path[256];
-	snprintf( path, sizeof( path ), "tex/%i.bmp", id );
-	SDL_SaveBMP( surf, path );
+	snprintf( path, sizeof( path ), "tex-%i.png", id );
+	SDL_SavePNG( surf, path );
 #endif
 
 	textures[id] = SDL_CreateTextureFromSurface( renderer, surf );
