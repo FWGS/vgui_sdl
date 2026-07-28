@@ -1,6 +1,9 @@
 #include "vgui_sdl.h"
 #include <VGUI_Font.h>
 #include <ctype.h>
+#include <time.h>
+
+volatile sig_atomic_t g_screenshot_requested = 0;
 
 static inline SDL_FRect rect( int x0, int y0, int x1, int y1 )
 {
@@ -401,8 +404,42 @@ void SDLSurface::setCursor( Cursor *cursor )
 	SDL_ShowCursor();
 }
 
+static void TakeScreenshot( SDL_Renderer *renderer )
+{
+	SDL_Surface *surf = SDL_RenderReadPixels( renderer, nullptr );
+
+	if( !surf )
+	{
+		printf( "Can't read pixels for screenshot: %s\n", SDL_GetError());
+		return;
+	}
+
+	static int counter = 0;
+	char timestamp[32];
+	char path[256];
+
+	time_t now = time( nullptr );
+	strftime( timestamp, sizeof( timestamp ), "%Y%m%d-%H%M%S", localtime( &now ));
+
+	snprintf( path, sizeof( path ), "screenshot-%s-%03d.png", timestamp, counter++ );
+
+	if( SDL_SavePNG( surf, path ))
+		printf( "Saved screenshot to %s\n", path );
+	else
+		printf( "Can't save screenshot to %s: %s\n", path, SDL_GetError());
+
+	SDL_DestroySurface( surf );
+}
+
 void SDLSurface::swapBuffers()
 {
+	// must happen before present: backbuffer contents are undefined afterwards
+	if( g_screenshot_requested )
+	{
+		g_screenshot_requested = 0;
+		TakeScreenshot( renderer );
+	}
+
 	SDL_RenderPresent( renderer );
 }
 

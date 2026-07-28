@@ -9,8 +9,12 @@
 #include <VGUI_SurfaceBase.h>
 #include <vector>
 #include <stdio.h>
+#include <signal.h>
 
 using namespace vgui;
+
+// set from SIGUSR1 handler, serviced in SDLSurface::swapBuffers
+extern volatile sig_atomic_t g_screenshot_requested;
 
 constexpr int MAX_TEXTURES = 4096;
 

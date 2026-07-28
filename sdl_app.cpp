@@ -205,9 +205,20 @@ private:
 	SDLSurface *surface = nullptr;
 };
 
+#ifndef _WIN32
+static void ScreenshotSignalHandler( int )
+{
+	g_screenshot_requested = 1;
+}
+#endif
+
 int main( int argc, char *argv[] )
 {
 	static SDLApp app;
+
+#ifndef _WIN32
+	signal( SIGUSR1, ScreenshotSignalHandler );
+#endif
 
 	if( !app.InitSDL())
 		return EXIT_FAILURE;
