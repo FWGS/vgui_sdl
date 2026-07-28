@@ -474,10 +474,23 @@ void SDLSurface::pushMakeCurrent( Panel *panel, bool useInsets )
 	viewport.h = h - viewport.y;
 
 	SDL_SetRenderViewport( renderer, &viewport );
+
+	// scissor to the panel's clip rect (absolute coords, so translate into
+	// the viewport space), otherwise scrolled content paints outside its
+	// clipping parent, e.g. ScrollPanel's client over the frame decorations
+	SDL_Rect clip;
+
+	clip.x = cliprects[0] - viewport.x;
+	clip.y = cliprects[1] - viewport.y;
+	clip.w = cliprects[2] - cliprects[0];
+	clip.h = cliprects[3] - cliprects[1];
+
+	SDL_SetRenderClipRect( renderer, &clip );
 }
 
 void SDLSurface::popMakeCurrent( Panel *panel )
 {
+	SDL_SetRenderClipRect( renderer, NULL );
 	SDL_SetRenderViewport( renderer, NULL );
 }
 
