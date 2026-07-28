@@ -78,7 +78,11 @@ bool SDLSurface::hasFocus()
 
 bool SDLSurface::isWithin( int x, int y )
 {
-	return SDL_GetWindowFlags( window ) & SDL_WINDOW_MOUSE_FOCUS;
+	int w, h;
+
+	SDL_GetWindowSizeInPixels( window, &w, &h );
+
+	return x >= 0 && x < w && y >= 0 && y < h;
 }
 
 int SDLSurface::createNewTextureID( void )
