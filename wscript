@@ -34,6 +34,6 @@ def build(bld):
 		target='vgui_test',
 		includes='.',
 		use='VGUI SDL3',
-		rpath='.'
+		rpath='$ORIGIN'
 	)
 	pass
