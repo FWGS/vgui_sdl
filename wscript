@@ -28,12 +28,25 @@ def configure(conf):
 	conf.load('sdl2 vgui')
 	conf.check_vgui()
 
+	# like in xash3d-fwgs, this software is never going to be installed
+	# into the system, so install everything flat into destdir ready to run
+	conf.env.BINDIR = conf.env.LIBDIR = conf.env.PREFIX
+
 def build(bld):
 	bld.program(
 		source=bld.path.ant_glob('*.cpp controls/*.cpp'),
 		target='vgui_test',
 		includes='.',
 		use='VGUI SDL3',
-		rpath='$ORIGIN'
+		rpath='$ORIGIN',
+		install_path=bld.env.BINDIR
 	)
-	pass
+
+	if bld.env.DEST_OS == 'linux' and bld.env.LIBPATH_VGUI:
+		bld.install_files(bld.env.LIBDIR,
+			bld.root.find_node(bld.env.LIBPATH_VGUI[0]).find_node('vgui.so'))
+
+	bld.install_files(bld.env.PREFIX,
+		bld.path.ant_glob('data/**'),
+		cwd=bld.path.find_dir('data'),
+		relative_trick=True)
