@@ -18,6 +18,73 @@
 #include <vector>
 #include "vgui_sdl.h"
 
+static KeyCode ScancodeToKeyCode( SDL_Scancode sc )
+{
+	if( sc >= SDL_SCANCODE_A && sc <= SDL_SCANCODE_Z )
+		return (KeyCode)( KeyCode::KEY_A + sc - SDL_SCANCODE_A );
+
+	if( sc >= SDL_SCANCODE_1 && sc <= SDL_SCANCODE_9 )
+		return (KeyCode)( KeyCode::KEY_1 + sc - SDL_SCANCODE_1 );
+
+	if( sc >= SDL_SCANCODE_F1 && sc <= SDL_SCANCODE_F12 )
+		return (KeyCode)( KeyCode::KEY_F1 + sc - SDL_SCANCODE_F1 );
+
+	if( sc >= SDL_SCANCODE_KP_1 && sc <= SDL_SCANCODE_KP_9 )
+		return (KeyCode)( KeyCode::KEY_PAD_1 + sc - SDL_SCANCODE_KP_1 );
+
+	switch( sc )
+	{
+	case SDL_SCANCODE_0:            return KeyCode::KEY_0;
+	case SDL_SCANCODE_KP_0:         return KeyCode::KEY_PAD_0;
+	case SDL_SCANCODE_KP_DIVIDE:    return KeyCode::KEY_PAD_DIVIDE;
+	case SDL_SCANCODE_KP_MULTIPLY:  return KeyCode::KEY_PAD_MULTIPLY;
+	case SDL_SCANCODE_KP_MINUS:     return KeyCode::KEY_PAD_MINUS;
+	case SDL_SCANCODE_KP_PLUS:      return KeyCode::KEY_PAD_PLUS;
+	case SDL_SCANCODE_KP_ENTER:     return KeyCode::KEY_PAD_ENTER;
+	case SDL_SCANCODE_KP_PERIOD:    return KeyCode::KEY_PAD_DECIMAL;
+	case SDL_SCANCODE_LEFTBRACKET:  return KeyCode::KEY_LBRACKET;
+	case SDL_SCANCODE_RIGHTBRACKET: return KeyCode::KEY_RBRACKET;
+	case SDL_SCANCODE_SEMICOLON:    return KeyCode::KEY_SEMICOLON;
+	case SDL_SCANCODE_APOSTROPHE:   return KeyCode::KEY_APOSTROPHE;
+	case SDL_SCANCODE_GRAVE:        return KeyCode::KEY_BACKQUOTE;
+	case SDL_SCANCODE_COMMA:        return KeyCode::KEY_COMMA;
+	case SDL_SCANCODE_PERIOD:       return KeyCode::KEY_PERIOD;
+	case SDL_SCANCODE_SLASH:        return KeyCode::KEY_SLASH;
+	case SDL_SCANCODE_BACKSLASH:    return KeyCode::KEY_BACKSLASH;
+	case SDL_SCANCODE_MINUS:        return KeyCode::KEY_MINUS;
+	case SDL_SCANCODE_EQUALS:       return KeyCode::KEY_EQUAL;
+	case SDL_SCANCODE_RETURN:       return KeyCode::KEY_ENTER;
+	case SDL_SCANCODE_SPACE:        return KeyCode::KEY_SPACE;
+	case SDL_SCANCODE_BACKSPACE:    return KeyCode::KEY_BACKSPACE;
+	case SDL_SCANCODE_TAB:          return KeyCode::KEY_TAB;
+	case SDL_SCANCODE_CAPSLOCK:     return KeyCode::KEY_CAPSLOCK;
+	case SDL_SCANCODE_NUMLOCKCLEAR: return KeyCode::KEY_NUMLOCK;
+	case SDL_SCANCODE_ESCAPE:       return KeyCode::KEY_ESCAPE;
+	case SDL_SCANCODE_SCROLLLOCK:   return KeyCode::KEY_SCROLLLOCK;
+	case SDL_SCANCODE_INSERT:       return KeyCode::KEY_INSERT;
+	case SDL_SCANCODE_DELETE:       return KeyCode::KEY_DELETE;
+	case SDL_SCANCODE_HOME:         return KeyCode::KEY_HOME;
+	case SDL_SCANCODE_END:          return KeyCode::KEY_END;
+	case SDL_SCANCODE_PAGEUP:       return KeyCode::KEY_PAGEUP;
+	case SDL_SCANCODE_PAGEDOWN:     return KeyCode::KEY_PAGEDOWN;
+	case SDL_SCANCODE_PAUSE:        return KeyCode::KEY_BREAK;
+	case SDL_SCANCODE_LSHIFT:       return KeyCode::KEY_LSHIFT;
+	case SDL_SCANCODE_RSHIFT:       return KeyCode::KEY_RSHIFT;
+	case SDL_SCANCODE_LALT:         return KeyCode::KEY_LALT;
+	case SDL_SCANCODE_RALT:         return KeyCode::KEY_RALT;
+	case SDL_SCANCODE_LCTRL:        return KeyCode::KEY_LCONTROL;
+	case SDL_SCANCODE_RCTRL:        return KeyCode::KEY_RCONTROL;
+	case SDL_SCANCODE_LGUI:         return KeyCode::KEY_LWIN;
+	case SDL_SCANCODE_RGUI:         return KeyCode::KEY_RWIN;
+	case SDL_SCANCODE_APPLICATION:  return KeyCode::KEY_APP;
+	case SDL_SCANCODE_UP:           return KeyCode::KEY_UP;
+	case SDL_SCANCODE_LEFT:         return KeyCode::KEY_LEFT;
+	case SDL_SCANCODE_DOWN:         return KeyCode::KEY_DOWN;
+	case SDL_SCANCODE_RIGHT:        return KeyCode::KEY_RIGHT;
+	default:                        return KeyCode::KEY_LAST;
+	}
+}
+
 class SDLApp : public App
 {
 public:
@@ -85,6 +152,64 @@ public:
 
 	}
 
+	// implement these methods to avoid crash in linux vgui.so 
+	char getKeyCodeChar( KeyCode code, bool shifted ) override
+	{
+		if( code >= KeyCode::KEY_A && code <= KeyCode::KEY_Z )
+			return ( shifted ? 'A' : 'a' ) + ( code - KeyCode::KEY_A );
+
+		if( code >= KeyCode::KEY_0 && code <= KeyCode::KEY_9 )
+			return shifted ? ")!@#$%^&*("[code - KeyCode::KEY_0] : '0' + ( code - KeyCode::KEY_0 );
+
+		if( code >= KeyCode::KEY_PAD_0 && code <= KeyCode::KEY_PAD_9 )
+			return '0' + ( code - KeyCode::KEY_PAD_0 );
+
+		switch( code )
+		{
+		case KeyCode::KEY_PAD_DIVIDE:   return '/';
+		case KeyCode::KEY_PAD_MULTIPLY: return '*';
+		case KeyCode::KEY_PAD_MINUS:    return '-';
+		case KeyCode::KEY_PAD_PLUS:     return '+';
+		case KeyCode::KEY_PAD_DECIMAL:  return '.';
+		case KeyCode::KEY_LBRACKET:     return shifted ? '{' : '[';
+		case KeyCode::KEY_RBRACKET:     return shifted ? '}' : ']';
+		case KeyCode::KEY_SEMICOLON:    return shifted ? ':' : ';';
+		case KeyCode::KEY_APOSTROPHE:   return shifted ? '"' : '\'';
+		case KeyCode::KEY_BACKQUOTE:    return shifted ? '~' : '`';
+		case KeyCode::KEY_COMMA:        return shifted ? '<' : ',';
+		case KeyCode::KEY_PERIOD:       return shifted ? '>' : '.';
+		case KeyCode::KEY_SLASH:        return shifted ? '?' : '/';
+		case KeyCode::KEY_BACKSLASH:    return shifted ? '|' : '\\';
+		case KeyCode::KEY_MINUS:        return shifted ? '_' : '-';
+		case KeyCode::KEY_EQUAL:        return shifted ? '+' : '=';
+		case KeyCode::KEY_SPACE:        return ' ';
+		default:                        return 0;
+		}
+	}
+
+	void getKeyCodeText( KeyCode code, char *buf, int buflen ) override
+	{
+		if( !buf || buflen < 2 )
+			return;
+
+		char ch = getKeyCodeChar( code, false );
+
+		buf[0] = ch;
+		buf[1] = '\0';
+
+		if( ch )
+			return;
+
+		switch( code )
+		{
+		case KeyCode::KEY_ENTER:     snprintf( buf, buflen, "Enter" ); break;
+		case KeyCode::KEY_ESCAPE:    snprintf( buf, buflen, "Escape" ); break;
+		case KeyCode::KEY_BACKSPACE: snprintf( buf, buflen, "Backspace" ); break;
+		case KeyCode::KEY_TAB:       snprintf( buf, buflen, "Tab" ); break;
+		default:                     buf[0] = '\0'; break;
+		}
+	}
+
 	Panel *RootPanel()
 	{
 		return rootpanel;
@@ -143,49 +268,27 @@ public:
 				}
 				break;
 			case SDL_EVENT_MOUSE_WHEEL:
-				internalMouseWheeled( (int)ev.wheel.x, surface );
+				internalMouseWheeled( (int)ev.wheel.y, surface );
 				break;
 			case SDL_EVENT_KEY_DOWN:
 			case SDL_EVENT_KEY_UP:
-				KeyCode kc = KeyCode::KEY_LAST;
+			{
+				KeyCode kc = ScancodeToKeyCode( ev.key.scancode );
 
-#define DECLARE_KEY_RANGE( min, max, repl ) if( ev.key.scancode >= (min) && ev.key.scancode <= (max) ) \
-				{ \
-	                kc = (KeyCode)(ev.key.scancode - (min) + (int)(repl)); \
-			    }
+				if( kc == KeyCode::KEY_LAST )
+					break;
 
-				DECLARE_KEY_RANGE( SDL_SCANCODE_0, SDL_SCANCODE_9, KeyCode::KEY_0 )
-				else DECLARE_KEY_RANGE( SDL_SCANCODE_F1, SDL_SCANCODE_F12, KeyCode::KEY_F1 )
-				else DECLARE_KEY_RANGE( SDL_SCANCODE_A, SDL_SCANCODE_Z, KeyCode::KEY_A )
-				else switch( ev.key.scancode )
+				if( ev.key.down )
 				{
-					// kinda lazy
-			        case SDL_SCANCODE_BACKSPACE:
-						kc = KeyCode::KEY_BACKSPACE;
-						break;
-					case SDL_SCANCODE_TAB:
-						kc = KeyCode::KEY_TAB;
-						break;
-					case SDL_SCANCODE_RETURN:
-						kc = KeyCode::KEY_ENTER;
-						break;
-					case SDL_SCANCODE_SPACE:
-						kc = KeyCode::KEY_SPACE;
-						break;
+					// key auto-repeat arrives as extra down events, same as
+					// the WM_KEYDOWN repeats vgui was written against
+					internalKeyPressed( kc, surface );
+					internalKeyTyped( kc, surface );
 				}
-
-				if( kc != KeyCode::KEY_LAST )
-				{
-					if( ev.key.down )
-					{
-						internalKeyPressed( kc, surface );
-						internalKeyTyped( kc, surface );
-					}
-					else
-						internalKeyReleased( kc, surface );
-				}
+				else
+					internalKeyReleased( kc, surface );
 				break;
-
+			}
 			}
 		}
 	}

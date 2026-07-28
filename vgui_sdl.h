@@ -160,3 +160,8 @@ DesktopIcon *CreateScrollPanelTest();
 // controls/tabpanel_test.cpp
 //
 DesktopIcon *CreateTabPanelTest();
+
+//
+// controls/textentry_test.cpp
+//
+DesktopIcon *CreateTextEntryTest();

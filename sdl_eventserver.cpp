@@ -93,26 +93,11 @@ static SDL_Scancode parse_key( const char *json )
 	if( !json_get_string( json, "key", name, sizeof( name )))
 		return SDL_SCANCODE_UNKNOWN;
 
-	if( !name[1] )
-	{
-		if( name[0] >= 'a' && name[0] <= 'z' )
-			return (SDL_Scancode)( SDL_SCANCODE_A + name[0] - 'a' );
-		if( name[0] >= '1' && name[0] <= '9' )
-			return (SDL_Scancode)( SDL_SCANCODE_1 + name[0] - '1' );
-		if( name[0] == '0' )
-			return SDL_SCANCODE_0;
-	}
+	if( !name[1] && name[0] >= 'a' && name[0] <= 'z' )
+		name[0] -= 'a' - 'A';
 
-	if( !strcmp( name, "enter" ))
-		return SDL_SCANCODE_RETURN;
-	if( !strcmp( name, "space" ))
-		return SDL_SCANCODE_SPACE;
-	if( !strcmp( name, "tab" ))
-		return SDL_SCANCODE_TAB;
-	if( !strcmp( name, "backspace" ))
-		return SDL_SCANCODE_BACKSPACE;
-
-	return SDL_SCANCODE_UNKNOWN;
+	// fallback to SDL scancode names
+	return SDL_GetScancodeFromName( name );
 }
 
 static void push_motion( int x, int y )
