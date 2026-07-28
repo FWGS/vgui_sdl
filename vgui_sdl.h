@@ -165,3 +165,23 @@ DesktopIcon *CreateTabPanelTest();
 // controls/textentry_test.cpp
 //
 DesktopIcon *CreateTextEntryTest();
+
+//
+// controls/slider_test.cpp
+//
+DesktopIcon *CreateSliderTest();
+
+//
+// controls/progressbar_test.cpp
+//
+DesktopIcon *CreateProgressBarTest();
+
+//
+// controls/imagepanel_test.cpp
+//
+DesktopIcon *CreateImagePanelTest();
+
+//
+// controls/messagebox_test.cpp
+//
+DesktopIcon *CreateMessageBoxTest();

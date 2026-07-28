@@ -61,6 +61,9 @@ public:
 
 	void AddIcon( DesktopIcon *di )
 	{
+		// fix for gray background on icons (inverted alpha is stupid)
+		di->setBgColor( 0, 0, 0, 255 );
+
 		desktop->addIcon( di );
 	}
 
@@ -104,6 +107,10 @@ void CreateViewport( Panel *rootpanel )
 	viewport->AddIcon( CreateTabPanelTest( ));
 	viewport->AddIcon( CreateButtonTest( ));
 	viewport->AddIcon( CreateTextEntryTest( ));
+	viewport->AddIcon( CreateSliderTest( ));
+	viewport->AddIcon( CreateProgressBarTest( ));
+	viewport->AddIcon( CreateImagePanelTest( ));
+	viewport->AddIcon( CreateMessageBoxTest( ));
 
 	viewport->GetDesktop()->arrangeIcons();
 }
