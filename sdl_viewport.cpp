@@ -38,6 +38,12 @@ public:
 		        new Font( "Arial", file, size, 18, 0, 0, 0, false, false, false, false ));
 		SDL_free( file );
 
+		// vgui::Frame wants marlett font at sf_secondary1
+		file = SDL_LoadFile( "fonts/marlett.tga", &size );
+		rootpanel->getApp()->getScheme()->setFont( Scheme::sf_secondary1,
+		        new Font( "Marlett", file, size, 12, 0, 0, 0, false, false, false, false ));
+		SDL_free( file );
+
 		file = SDL_LoadFile( "fonts/primary3.tga", &size );
 		rootpanel->getApp()->getScheme()->setFont( Scheme::sf_primary3,
 		        new Font( "Arial", file, size, 21, 0, 0, 0, false, false, false, false ));
