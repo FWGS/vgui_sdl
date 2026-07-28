@@ -225,6 +225,8 @@ int main( int argc, char *argv[] )
 	signal( SIGUSR1, ScreenshotSignalHandler );
 #endif
 
+	EventServer_Start();
+
 	if( !app.InitSDL())
 		return EXIT_FAILURE;
 

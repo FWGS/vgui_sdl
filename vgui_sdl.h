@@ -92,4 +92,6 @@ void DestroyViewport();
 
 Image *LoadTGA( const char *path );
 
+void EventServer_Start( void );
+
 DesktopIcon *CreateLabelTest();
