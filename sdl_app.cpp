@@ -18,6 +18,37 @@
 #include <vector>
 #include "vgui_sdl.h"
 
+static int sys_argc;
+static char **sys_argv;
+
+static int Sys_CheckParm( const char *parm )
+{
+	for( int i = 1; i < sys_argc; i++ )
+	{
+		if( !sys_argv[i] )
+			continue;
+
+		if( !SDL_strcasecmp( parm, sys_argv[i] ))
+			return i;
+	}
+
+	return 0;
+}
+
+static bool Sys_GetIntFromCmdLine( const char *parm, int *out )
+{
+	int argIndex = Sys_CheckParm( parm );
+
+	if( argIndex < 1 || argIndex + 1 >= sys_argc || !sys_argv[argIndex + 1] )
+	{
+		*out = 0;
+		return false;
+	}
+
+	*out = SDL_atoi( sys_argv[argIndex + 1] );
+	return true;
+}
+
 static KeyCode ScancodeToKeyCode( SDL_Scancode sc )
 {
 	if( sc >= SDL_SCANCODE_A && sc <= SDL_SCANCODE_Z )
@@ -323,6 +354,16 @@ static void ScreenshotSignalHandler( int )
 int main( int argc, char *argv[] )
 {
 	static SDLApp app;
+	int width, height;
+
+	sys_argc = argc;
+	sys_argv = argv;
+
+	if( !Sys_GetIntFromCmdLine( "-width", &width ))
+		width = 640;
+
+	if( !Sys_GetIntFromCmdLine( "-height", &height ))
+		height = 480;
 
 #ifndef _WIN32
 	signal( SIGUSR1, ScreenshotSignalHandler );
@@ -333,7 +374,7 @@ int main( int argc, char *argv[] )
 	if( !app.InitSDL())
 		return EXIT_FAILURE;
 
-	if( !app.CreateRootPanel( 640, 480 ))
+	if( !app.CreateRootPanel( width, height ))
 		return EXIT_FAILURE;
 
 	if( !app.CreateSurface())
