@@ -132,7 +132,12 @@ public:
 				if( mc != MouseCode::MOUSE_LAST )
 				{
 					if( ev.button.down )
-						internalMousePressed( mc, surface );
+					{
+						if( ev.button.clicks > 1 )
+							internalMouseDoublePressed( mc, surface );
+						else
+							internalMousePressed( mc, surface );
+					}
 					else
 						internalMouseReleased( mc, surface );
 				}
