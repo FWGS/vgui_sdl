@@ -100,8 +100,8 @@ void CreateViewport( Panel *rootpanel )
 	viewport = new Viewport( rootpanel );
 
 	viewport->AddIcon( CreateLabelTest( ));
-	// viewport->AddIcon( CreateScrollPanelTest( ));
-	// viewport->AddIcon( CreateTabPanelTest( ));
+	viewport->AddIcon( CreateScrollPanelTest( ));
+	viewport->AddIcon( CreateTabPanelTest( ));
 
 	viewport->GetDesktop()->arrangeIcons();
 }
