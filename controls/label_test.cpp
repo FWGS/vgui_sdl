@@ -11,28 +11,26 @@ public:
 	LabelTestMiniApp()
 	{
 		setName( "LabelTest" );
+	}
 
-		frame = new Frame( 200, 200, 200, 100 );
+	// a factory: every desktop icon activation spawns a fresh frame
+	Frame *createInstance()
+	{
+		Frame *frame = new Frame( 200, 200, 200, 100 );
+
 		frame->setTitle( "LabelTest" );
+		frame->addFrameSignal( new TestFrameSignal );
 
 		BorderLayout *layout = new BorderLayout( 0 );
 		frame->getClient()->setLayout( layout );
 
-		label = new Label( "Hello World!" );
+		Label *label = new Label( "Hello World!" );
 		label->setLayoutInfo( layout->createLayoutInfo( BorderLayout::a_center ));
 
 		frame->getClient()->addChild( label );
-	}
 
-	Frame *createInstance()
-	{
 		return frame;
 	}
-
-private:
-
-	Frame *frame;
-	Label *label;
 };
 
 DesktopIcon *CreateLabelTest()

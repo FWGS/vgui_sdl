@@ -3,10 +3,13 @@
 #include <SDL3/SDL.h>
 #include <VGUI.h>
 #include <VGUI_App.h>
+#include <VGUI_Desktop.h>
 #include <VGUI_DesktopIcon.h>
 #include <VGUI_Font.h>
+#include <VGUI_FrameSignal.h>
 #include <VGUI_Panel.h>
 #include <VGUI_SurfaceBase.h>
+#include <VGUI_TaskBar.h>
 #include <vector>
 #include <stdio.h>
 #include <signal.h>
@@ -87,11 +90,68 @@ private:
 	FontTexture *font_texture = nullptr;
 };
 
+//
+// sdl_viewport.cpp
+//
 void CreateViewport( Panel *rootpanel );
 void DestroyViewport();
-
 Image *LoadTGA( const char *path );
+void DestroyFrame( Frame *frame );
 
+// shared by the test miniapps: reacting to the close button is app
+// responsibility (the stock taskbar handler's closing() is a no-op),
+// and destroying frames exists purely for testing convenience
+class TestFrameSignal : public FrameSignal
+{
+public:
+	void closing( Frame *frame ) override
+	{
+		DestroyFrame( frame );
+	}
+
+	void minimizing( Frame *frame, bool toTray ) override
+	{
+	}
+};
+
+//
+// controls/taskbar.cpp
+//
+class TaskBarEx : public TaskBar
+{
+public:
+	TaskBarEx( int x, int y, int wide, int tall );
+
+	void removeFrame( Frame *frame );
+};
+
+class DesktopEx : public Desktop
+{
+public:
+	DesktopEx( int x, int y, int wide, int tall );
+
+	TaskBarEx *getTaskBar();
+
+private:
+	TaskBarEx *taskbar;
+};
+
+//
+// sdl_eventserver.cpp
+//
 void EventServer_Start( void );
 
+//
+// controls/label_test.cpp
+//
 DesktopIcon *CreateLabelTest();
+
+//
+// controls/scrollpanel_test.cpp
+//
+DesktopIcon *CreateScrollPanelTest();
+
+//
+// controls/tabpanel_test.cpp
+//
+DesktopIcon *CreateTabPanelTest();

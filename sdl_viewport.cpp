@@ -3,6 +3,7 @@
 #include <VGUI_DesktopIcon.h>
 #include <VGUI_BitmapTGA.h>
 #include <VGUI_FileInputStream.h>
+#include <VGUI_Frame.h>
 
 Image *LoadTGA( const char *path )
 {
@@ -53,7 +54,7 @@ public:
 		rootpanel->getPos( x, y );
 		rootpanel->getSize( w, h );
 
-		desktop = new Desktop( x, y, w, h );
+		desktop = new DesktopEx( x, y, w, h );
 
 		rootpanel->addChild( desktop );
 	}
@@ -61,6 +62,11 @@ public:
 	void AddIcon( DesktopIcon *di )
 	{
 		desktop->addIcon( di );
+	}
+
+	DesktopEx *GetDesktop()
+	{
+		return desktop;
 	}
 
 	~Viewport()
@@ -72,16 +78,32 @@ public:
 
 private:
 	Panel *rootpanel;
-	Desktop *desktop;
+	DesktopEx *desktop;
 };
 
 static Viewport *viewport;
+
+// it leaks, but I don't care, VGUI is leak-driven software anyway 
+void DestroyFrame( Frame *frame )
+{
+	frame->setVisible( false );
+	frame->getApp()->requestFocus( nullptr );
+
+	viewport->GetDesktop()->getTaskBar()->removeFrame( frame );
+
+	if( frame->getParent())
+		frame->getParent()->removeChild( frame );
+}
 
 void CreateViewport( Panel *rootpanel )
 {
 	viewport = new Viewport( rootpanel );
 
 	viewport->AddIcon( CreateLabelTest( ));
+	// viewport->AddIcon( CreateScrollPanelTest( ));
+	// viewport->AddIcon( CreateTabPanelTest( ));
+
+	viewport->GetDesktop()->arrangeIcons();
 }
 
 void DeleteViewport()
