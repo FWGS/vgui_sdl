@@ -3,7 +3,6 @@
 #include <VGUI_Frame.h>
 #include <VGUI_Label.h>
 #include <VGUI_MiniApp.h>
-#include <VGUI_TextImage.h>
 
 class LabelTestMiniApp : public MiniApp
 {
@@ -32,13 +31,9 @@ private:
 
 DesktopIcon *CreateLabelTest()
 {
-	TextImage *ti = new TextImage("Label");
-	ti->setFont( vgui::Scheme::sf_primary1 );
-	ti->setSize( 32, 32 );
-
 	DesktopIcon *di = new DesktopIcon(
 	    new LabelTestMiniApp(),
-	    ti );
+	    LoadTGA( "icons/notepad.tga" ));
 
 	return di;
 }

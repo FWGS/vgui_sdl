@@ -1,6 +1,20 @@
 #include "vgui_sdl.h"
 #include <VGUI_Desktop.h>
 #include <VGUI_DesktopIcon.h>
+#include <VGUI_BitmapTGA.h>
+#include <VGUI_FileInputStream.h>
+
+Image *LoadTGA( const char *path )
+{
+	// invertAlpha=true keeps the regular 255 = opaque convention our
+	// SDL surface expects, as loadTGA inverts the alpha otherwise
+	FileInputStream fis( path, false );
+	BitmapTGA *bitmap = new BitmapTGA( &fis, true );
+
+	fis.close();
+
+	return bitmap;
+}
 
 class Viewport
 {

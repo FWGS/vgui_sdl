@@ -73,7 +73,7 @@ private:
 	SDL_Renderer *renderer = nullptr;
 
 	SDL_Texture *textures[MAX_TEXTURES] = {};
-	int last_texture = 0;
+	int last_texture = 1; // id 0 means "no texture" in vgui
 	int bound_texture = 0;
 
 	int color[4] = {};
@@ -89,5 +89,7 @@ private:
 
 void CreateViewport( Panel *rootpanel );
 void DestroyViewport();
+
+Image *LoadTGA( const char *path );
 
 DesktopIcon *CreateLabelTest();

@@ -301,6 +301,9 @@ void SDLSurface::drawSetTextureRGBA( int id, const char *rgba, int wide, int tal
 
 	textures[id] = SDL_CreateTextureFromSurface( renderer, surf );
 
+	if( textures[id] )
+		SDL_SetTextureBlendMode( textures[id], SDL_BLENDMODE_BLEND );
+
 	SDL_DestroySurface( surf );
 }
 

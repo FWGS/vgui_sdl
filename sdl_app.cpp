@@ -223,7 +223,7 @@ int main( int argc, char *argv[] )
 	if( !app.InitSDL())
 		return EXIT_FAILURE;
 
-	if( !app.CreateRootPanel( 1024, 768 ))
+	if( !app.CreateRootPanel( 640, 480 ))
 		return EXIT_FAILURE;
 
 	if( !app.CreateSurface())
