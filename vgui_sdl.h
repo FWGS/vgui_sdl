@@ -185,3 +185,13 @@ DesktopIcon *CreateImagePanelTest();
 // controls/messagebox_test.cpp
 //
 DesktopIcon *CreateMessageBoxTest();
+
+//
+// controls/menu_test.cpp
+//
+DesktopIcon *CreateMenuTest();
+
+//
+// controls/listpanel_test.cpp
+//
+DesktopIcon *CreateListPanelTest();

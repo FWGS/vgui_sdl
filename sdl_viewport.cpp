@@ -111,6 +111,8 @@ void CreateViewport( Panel *rootpanel )
 	viewport->AddIcon( CreateProgressBarTest( ));
 	viewport->AddIcon( CreateImagePanelTest( ));
 	viewport->AddIcon( CreateMessageBoxTest( ));
+	viewport->AddIcon( CreateMenuTest( ));
+	viewport->AddIcon( CreateListPanelTest( ));
 
 	viewport->GetDesktop()->arrangeIcons();
 }
