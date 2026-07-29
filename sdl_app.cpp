@@ -20,6 +20,30 @@
 
 static int sys_argc;
 static char **sys_argv;
+static std::vector<BuildGroup *> g_buildgroups;
+
+void BuildMode_Register( BuildGroup *bg )
+{
+	g_buildgroups.push_back( bg );
+}
+
+void BuildMode_Toggle( void )
+{
+	static bool enabled = false;
+
+	for( BuildGroup *bg : g_buildgroups )
+		bg->setEnabled( !enabled );
+
+	if( g_buildgroups.size() > 0 )
+	{
+		enabled = !enabled;
+		printf( "build mode %s for %d group(s)\n", enabled ? "off" : "on", (int)g_buildgroups.size());
+	}
+	else
+	{
+		printf( "no build groups registered\n" );
+	}
+}
 
 static int Sys_CheckParm( const char *parm )
 {
@@ -241,6 +265,48 @@ public:
 		}
 	}
 
+	void setClipboardText( const char *text, int textLen ) override
+	{
+		char *copy = (char *)SDL_malloc( textLen + 1 );
+
+		SDL_memcpy( copy, text, textLen );
+		copy[textLen] = '\0';
+		SDL_SetClipboardText( copy );
+		SDL_free( copy );
+	}
+
+	int getClipboardTextCount() override
+	{
+		char *text = SDL_GetClipboardText();
+		int count = (int)SDL_strlen( text );
+
+		SDL_free( text );
+
+		return count;
+	}
+
+	int getClipboardText( int offset, char *buf, int bufLen ) override
+	{
+		char *text = SDL_GetClipboardText();
+		int len = (int)SDL_strlen( text );
+		int copied = 0;
+
+		if( offset < len && bufLen > 0 )
+		{
+			copied = len - offset;
+
+			if( copied > bufLen - 1 )
+				copied = bufLen - 1;
+
+			SDL_memcpy( buf, text + offset, copied );
+			buf[copied] = '\0';
+		}
+
+		SDL_free( text );
+
+		return copied;
+	}
+
 	Panel *RootPanel()
 	{
 		return rootpanel;
@@ -304,6 +370,16 @@ public:
 			case SDL_EVENT_KEY_DOWN:
 			case SDL_EVENT_KEY_UP:
 			{
+				// in-game this was Ctrl+Shift+Alt+B; the hotkey is app glue,
+				// build mode itself ships with VGUI.
+
+				// NOTE it is NOT App::enableBuildMode - that flag only freezes the App input dispatch
+				if( ev.key.down && ev.key.scancode == SDL_SCANCODE_B && ( ev.key.mod & SDL_KMOD_CTRL ))
+				{
+					BuildMode_Toggle();
+					break;
+				}
+
 				KeyCode kc = ScancodeToKeyCode( ev.key.scancode );
 
 				if( kc == KeyCode::KEY_LAST )

@@ -4,6 +4,7 @@
 #include <VGUI_BitmapTGA.h>
 #include <VGUI_FileInputStream.h>
 #include <VGUI_Frame.h>
+#include <VGUI_Label.h>
 
 Image *LoadTGA( const char *path )
 {
@@ -57,6 +58,15 @@ public:
 		desktop = new DesktopEx( x, y, w, h );
 
 		rootpanel->addChild( desktop );
+
+		Label *notice = new Label( "To open build mode, enter Ctrl+B", 0, 0 );
+		int lw, lt;
+
+		notice->setBgColor( 0, 0, 0, 255 ); // transparent
+		notice->setFgColor( 255, 255, 255, 0 );
+		notice->getSize( lw, lt );
+		notice->setPos( w - lw - 8, h - 36 - lt - 4 );
+		desktop->addChild( notice );
 	}
 
 	void AddIcon( DesktopIcon *di )
@@ -117,6 +127,7 @@ void CreateViewport( Panel *rootpanel )
 	viewport->AddIcon( CreateWizardTest( ));
 	viewport->AddIcon( CreateConfigWizardTest( ));
 	viewport->AddIcon( CreateBorderTest( ));
+	viewport->AddIcon( CreateBuildGroupTest( ));
 
 	viewport->GetDesktop()->arrangeIcons();
 }

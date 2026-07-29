@@ -3,6 +3,7 @@
 #include <SDL3/SDL.h>
 #include <VGUI.h>
 #include <VGUI_App.h>
+#include <VGUI_BuildGroup.h>
 #include <VGUI_Desktop.h>
 #include <VGUI_DesktopIcon.h>
 #include <VGUI_Font.h>
@@ -145,6 +146,14 @@ private:
 void EventServer_Start( void );
 
 //
+// sdl_app.cpp: Ctrl+B toggles every registered BuildGroup (VGUI's
+// built-in edit mode). App::enableBuildMode is a different, one-way
+// input-freeze flag
+//
+void BuildMode_Register( BuildGroup *bg );
+void BuildMode_Toggle( void );
+
+//
 // controls/button_test.cpp
 //
 DesktopIcon *CreateButtonTest();
@@ -218,3 +227,8 @@ DesktopIcon *CreateConfigWizardTest();
 // controls/border_test.cpp
 //
 DesktopIcon *CreateBorderTest();
+
+//
+// controls/buildgroup_test.cpp
+//
+DesktopIcon *CreateBuildGroupTest();
