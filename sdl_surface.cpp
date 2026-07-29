@@ -93,11 +93,14 @@ int SDLSurface::createNewTextureID( void )
 void SDLSurface::GetMousePos( int &x, int &y )
 {
 	float fx, fy;
+	int wx, wy;
 
+	// must be in the same coordinate space as isWithin
 	SDL_GetGlobalMouseState( &fx, &fy );
+	SDL_GetWindowPosition( window, &wx, &wy );
 
-	x = (int)fx;
-	y = (int)fy;
+	x = (int)fx - wx;
+	y = (int)fy - wy;
 }
 
 void SDLSurface::addModeInfo( int wide, int tall, int bpp )
