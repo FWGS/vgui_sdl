@@ -72,6 +72,8 @@ protected:
 	void applyChanges() override;
 
 private:
+	SDL_FRect rect( int x0, int y0, int x1, int y1 );
+
 	SDL_Window *window = nullptr;
 	SDL_Renderer *renderer = nullptr;
 
@@ -82,6 +84,7 @@ private:
 	int color[4] = {};
 	int text_color[4] = {};
 	int text_pos[2] = {};
+	int origin[2] = {};
 
 	SDL_Cursor *cursors[SDL_SYSTEM_CURSOR_COUNT] = {};
 

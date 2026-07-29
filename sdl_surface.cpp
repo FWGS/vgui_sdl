@@ -5,9 +5,9 @@
 
 volatile sig_atomic_t g_screenshot_requested = 0;
 
-static inline SDL_FRect rect( int x0, int y0, int x1, int y1 )
+SDL_FRect SDLSurface::rect( int x0, int y0, int x1, int y1 )
 {
-	SDL_FRect frect = { (float)x0, (float)y0, (float)(x1 - x0), (float)(y1 - y0) };
+	SDL_FRect frect = { (float)( x0 + origin[0] ), (float)( y0 + origin[1] ), (float)( x1 - x0 ), (float)( y1 - y0 ) };
 	return frect;
 }
 
@@ -278,8 +278,8 @@ void SDLSurface::drawPrintText( const char *text, int textLen )
 		SDL_FRect srcrect = font_texture->rects[ch];
 
 		SDL_FRect dstrect = {
-		    (float)text_pos[0] + (float)a,
-		    (float)text_pos[1],
+		    (float)( text_pos[0] + a + origin[0] ),
+		    (float)( text_pos[1] + origin[1] ),
 		    (float)b,
 		    (float)height
 		};
@@ -465,26 +465,16 @@ void SDLSurface::pushMakeCurrent( Panel *panel, bool useInsets )
 	panel->getAbsExtents( absExtents[0], absExtents[1], absExtents[2], absExtents[3] );
 	panel->getClipRect( cliprects[0], cliprects[1], cliprects[2], cliprects[3] );
 
-	SDL_Rect viewport;
+	origin[0] = insets[0] + absExtents[0];
+	origin[1] = insets[1] + absExtents[1];
 
-	int w, h;
-
-	SDL_GetWindowSizeInPixels( window, &w, &h );
-
-	viewport.x = insets[0] + absExtents[0];
-	viewport.y = insets[1] + absExtents[1];
-	viewport.w = w - viewport.x;
-	viewport.h = h - viewport.y;
-
-	SDL_SetRenderViewport( renderer, &viewport );
-
-	// scissor to the panel's clip rect (absolute coords, so translate into
-	// the viewport space), otherwise scrolled content paints outside its
-	// clipping parent, e.g. ScrollPanel's client over the frame decorations
+	// scissor to the panel's clip rect, otherwise scrolled content paints
+	// outside its clipping parent, e.g. ScrollPanel's client over the
+	// frame decorations
 	SDL_Rect clip;
 
-	clip.x = cliprects[0] - viewport.x;
-	clip.y = cliprects[1] - viewport.y;
+	clip.x = cliprects[0];
+	clip.y = cliprects[1];
 	clip.w = cliprects[2] - cliprects[0];
 	clip.h = cliprects[3] - cliprects[1];
 
@@ -494,7 +484,7 @@ void SDLSurface::pushMakeCurrent( Panel *panel, bool useInsets )
 void SDLSurface::popMakeCurrent( Panel *panel )
 {
 	SDL_SetRenderClipRect( renderer, NULL );
-	SDL_SetRenderViewport( renderer, NULL );
+	origin[0] = origin[1] = 0;
 }
 
 void SDLSurface::applyChanges()
