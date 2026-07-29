@@ -113,6 +113,7 @@ void CreateViewport( Panel *rootpanel )
 	viewport->AddIcon( CreateMessageBoxTest( ));
 	viewport->AddIcon( CreateMenuTest( ));
 	viewport->AddIcon( CreateListPanelTest( ));
+	viewport->AddIcon( CreateTablePanelTest( ));
 
 	viewport->GetDesktop()->arrangeIcons();
 }

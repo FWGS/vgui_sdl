@@ -195,3 +195,8 @@ DesktopIcon *CreateMenuTest();
 // controls/listpanel_test.cpp
 //
 DesktopIcon *CreateListPanelTest();
+
+//
+// controls/tablepanel_test.cpp
+//
+DesktopIcon *CreateTablePanelTest();
