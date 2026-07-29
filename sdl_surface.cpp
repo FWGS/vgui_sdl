@@ -5,6 +5,9 @@
 
 volatile sig_atomic_t g_screenshot_requested = 0;
 
+static SDL_Window *s_window;
+static SDL_Renderer *s_renderer;
+
 SDL_FRect SDLSurface::rect( int x0, int y0, int x1, int y1 )
 {
 	SDL_FRect frect = { (float)( x0 + origin[0] ), (float)( y0 + origin[1] ), (float)( x1 - x0 ), (float)( y1 - y0 ) };
@@ -31,6 +34,16 @@ SDLSurface::~SDLSurface()
 	SDL_DestroyWindow( window );
 }
 
+SDL_Window *Sys_GetWindow( void )
+{
+	return s_window;
+}
+
+SDL_Renderer *Sys_GetRenderer( void )
+{
+	return s_renderer;
+}
+
 bool SDLSurface::CreateWindow()
 {
 	int wide, tall;
@@ -41,6 +54,9 @@ bool SDLSurface::CreateWindow()
 		printf( "Can't create SDL window and surface: %s\n", SDL_GetError());
 		return false;
 	}
+
+	s_window = window;
+	s_renderer = renderer;
 
 	return true;
 }

@@ -34,7 +34,7 @@ def configure(conf):
 
 def build(bld):
 	bld.program(
-		source=bld.path.ant_glob('*.cpp controls/*.cpp'),
+		source=bld.path.ant_glob('*.cpp controls/*.cpp apps/*.cpp'),
 		target='vgui_test',
 		includes='.',
 		use='VGUI SDL3',

@@ -45,6 +45,30 @@ void BuildMode_Toggle( void )
 	}
 }
 
+// freevgui_version() is a FreeVGUI-only extension export
+typedef const char *( *freevgui_version_t )( void );
+
+#ifdef _WIN32
+#include <windows.h>
+const char *Sys_FreeVGUIVersion( void )
+{
+	freevgui_version_t fn = (freevgui_version_t)GetProcAddress( GetModuleHandleA( "vgui.dll" ), "freevgui_version" );
+
+	return fn ? fn() : nullptr;
+}
+#else
+#include <dlfcn.h>
+const char *Sys_FreeVGUIVersion( void )
+{
+	// dlopen(NULL) hands back the global symbol scope, which includes the
+	// linked vgui.so, so dlsym finds the export there when present
+	void *self = dlopen( nullptr, RTLD_LAZY );
+	freevgui_version_t fn = self ? (freevgui_version_t)dlsym( self, "freevgui_version" ) : nullptr;
+
+	return fn ? fn() : nullptr;
+}
+#endif
+
 static int Sys_CheckParm( const char *parm )
 {
 	for( int i = 1; i < sys_argc; i++ )

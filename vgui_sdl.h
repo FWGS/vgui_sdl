@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
+#ifndef VGUI_SDL_H
+#define VGUI_SDL_H
 
 #include <SDL3/SDL.h>
 #include <VGUI.h>
@@ -119,6 +121,12 @@ public:
 };
 
 //
+// sdl_surface.cpp: live SDL window/renderer, for apps/ to introspect
+//
+SDL_Window *Sys_GetWindow( void );
+SDL_Renderer *Sys_GetRenderer( void );
+
+//
 // controls/taskbar.cpp
 //
 class TaskBarEx : public TaskBar
@@ -127,6 +135,13 @@ public:
 	TaskBarEx( int x, int y, int wide, int tall );
 
 	void removeFrame( Frame *frame );
+	Button *getStartButton() { return start; }
+
+protected:
+	void performLayout() override;
+
+private:
+	Button *start;
 };
 
 class DesktopEx : public Desktop
@@ -152,6 +167,9 @@ void EventServer_Start( void );
 //
 void BuildMode_Register( BuildGroup *bg );
 void BuildMode_Toggle( void );
+
+// returns FreeVGUI version or NULL if we're running against proprietary VGUI
+const char *Sys_FreeVGUIVersion( void );
 
 //
 // controls/button_test.cpp
@@ -237,3 +255,5 @@ DesktopIcon *CreateBuildGroupTest();
 // controls/focusnav_test.cpp
 //
 DesktopIcon *CreateFocusNavTest();
+
+#endif // VGUI_SDL_H

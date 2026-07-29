@@ -1,4 +1,5 @@
 #include "vgui_sdl.h"
+#include "apps/apps.h"
 #include <VGUI_Desktop.h>
 #include <VGUI_DesktopIcon.h>
 #include <VGUI_BitmapTGA.h>
@@ -59,14 +60,33 @@ public:
 
 		rootpanel->addChild( desktop );
 
-		Label *notice = new Label( "To open build mode, enter Ctrl+B", 0, 0 );
+		AddNotice( "VGUI SDL3 testbed", 3 );
+		char s[128];
+		snprintf( s, sizeof( s ), "Compiled with SDL %d.%d.%d",
+			SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_MICRO_VERSION );
+		AddNotice( s, 2 );
+
+		int v = SDL_GetVersion();
+		snprintf( s, sizeof( s ), "SDL runtime is %d.%d.%d",
+			SDL_VERSIONNUM_MAJOR( v ), SDL_VERSIONNUM_MINOR( v ), SDL_VERSIONNUM_MICRO( v ));
+		AddNotice( s, 1 );
+
+	}
+
+	void AddNotice( const char *text, int pos )
+	{
+		int w, h;
+		rootpanel->getSize( w, h );
+
 		int lw, lt;
+		Label *notice = new Label( text, 0, 0 );
 
 		notice->setBgColor( 0, 0, 0, 255 ); // transparent
 		notice->setFgColor( 255, 255, 255, 0 );
 		notice->getSize( lw, lt );
-		notice->setPos( w - lw - 8, h - 36 - lt - 4 );
-		desktop->addChild( notice );
+		notice->setPos( w - lw - 8, h - 36 - lt * pos - 4 );
+
+		desktop->getBackground()->addChild( notice );
 	}
 
 	void AddIcon( DesktopIcon *di )
@@ -131,6 +151,8 @@ void CreateViewport( Panel *rootpanel )
 	viewport->AddIcon( CreateFocusNavTest( ));
 
 	viewport->GetDesktop()->arrangeIcons();
+
+	CreateStartMenu( viewport->GetDesktop());
 }
 
 void DeleteViewport()
