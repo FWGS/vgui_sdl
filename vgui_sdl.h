@@ -232,3 +232,8 @@ DesktopIcon *CreateBorderTest();
 // controls/buildgroup_test.cpp
 //
 DesktopIcon *CreateBuildGroupTest();
+
+//
+// controls/focusnav_test.cpp
+//
+DesktopIcon *CreateFocusNavTest();
