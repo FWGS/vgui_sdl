@@ -200,3 +200,18 @@ DesktopIcon *CreateListPanelTest();
 // controls/tablepanel_test.cpp
 //
 DesktopIcon *CreateTablePanelTest();
+
+//
+// controls/wizard_test.cpp
+//
+DesktopIcon *CreateWizardTest();
+
+//
+// controls/configwizard_test.cpp
+//
+DesktopIcon *CreateConfigWizardTest();
+
+//
+// controls/border_test.cpp
+//
+DesktopIcon *CreateBorderTest();
