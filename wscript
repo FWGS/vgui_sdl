@@ -28,18 +28,13 @@ def configure(conf):
 	conf.load('sdl2 vgui')
 	conf.check_vgui()
 
-	conf.recurse('3rdparty/library_suffix public freevgui')
+	conf.recurse('freevgui')
 
 	# like in xash3d-fwgs, this software is never going to be installed
 	# into the system, so install everything flat into destdir ready to run
 	conf.env.BINDIR = conf.env.LIBDIR = conf.env.PREFIX
 
 def build(bld):
-	# stub werror use to be able to compile library_suffix and mini public
-	bld(name='werror')
-
-	bld.recurse('3rdparty/library_suffix public')
-
 	saved_libdir = bld.env.LIBDIR # change the libdir so it installs into directory we want
 	bld.env.LIBDIR = os.path.join(saved_libdir, 'free')
 	bld.recurse('freevgui')
