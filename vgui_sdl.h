@@ -37,6 +37,8 @@ using namespace vgui;
 struct host_s
 {
 	int scale = 1;                              // -scale N nearest render scale, always >=1
+	bool drawBounds = false;                    // Ctrl+R panel-bounds overlay
+	bool drawLabels = false;                    // Ctrl+E class-name labels
 	volatile sig_atomic_t screenshotRequested = 0; // set by SIGUSR1/event server, serviced in swapBuffers
 };
 

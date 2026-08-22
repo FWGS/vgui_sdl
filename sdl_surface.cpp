@@ -6,6 +6,10 @@
 #endif
 #include <ctype.h>
 #include <time.h>
+#include <stdlib.h>
+#include <string.h>
+#include <typeinfo>
+#include <cxxabi.h>
 
 static SDL_Window *s_window;
 static SDL_Renderer *s_renderer;
@@ -52,6 +56,62 @@ SDL_Window *Sys_GetWindow( void )
 SDL_Renderer *Sys_GetRenderer( void )
 {
 	return s_renderer;
+}
+
+// debug overlay: outline every visible panel, coloured by tree depth, drawn
+// straight on the SDL_Renderer in swapBuffers so VGUI never sees it. host.drawBounds
+// shows the rects, host.drawLabels the class-name labels; toggled in sdl_app.cpp
+static void DrawPanelBounds( SDL_Renderer *renderer, Panel *panel, int depth )
+{
+	static const struct { Uint8 r, g, b; } colors[] =
+	{
+		{ 255,  64,  64 }, {  64, 255,  64 }, {  96, 160, 255 }, { 255, 255,  64 },
+		{ 255,  96, 255 }, {  64, 255, 255 }, { 255, 160,  64 }, { 160,  96, 255 },
+	};
+
+	// an invisible panel hides its whole subtree, so prune here
+	if( !panel->isVisible())
+		return;
+
+	// Panel::_paintEnabled has no public getter, so read it by its offset. The
+	// 186 offset is from the 32-bit (ILP32) ABI this testbed is built against;
+	// on any other data model the layout differs, so fall back to outlining
+	// everything. Skipping paint-disabled panels drops Frame's invisible grips,
+	// but we still recurse: paint-disabled containers such as the desktop
+	// foreground still host visible children
+#if defined( __ILP32__ ) || __SIZEOF_POINTER__ == 4
+	bool paintEnabled = *(const bool *)( (const char *)panel + 186 );
+#else
+	bool paintEnabled = true;
+#endif
+
+	if( paintEnabled )
+	{
+		int x0, y0, x1, y1;
+		panel->getAbsExtents( x0, y0, x1, y1 );
+
+		int i = depth % ( sizeof( colors ) / sizeof( colors[0] ));
+		SDL_SetRenderDrawColor( renderer, colors[i].r, colors[i].g, colors[i].b, 255 );
+
+		SDL_FRect frect = { (float)x0, (float)y0, (float)( x1 - x0 ), (float)( y1 - y0 ) };
+		SDL_RenderRect( renderer, &frect );
+
+		if( host.drawLabels )
+		{
+			int status;
+			char *demangled = abi::__cxa_demangle( typeid( *panel ).name(), NULL, NULL, &status );
+			const char *name = ( status == 0 && demangled ) ? demangled : typeid( *panel ).name();
+
+			if( !strncmp( name, "vgui::", 6 ))
+				name += 6;
+
+			SDL_RenderDebugText( renderer, x0 + 2, y0 + 2, name );
+			free( demangled );
+		}
+	}
+
+	for( int c = 0; c < panel->getChildCount(); c++ )
+		DrawPanelBounds( renderer, panel->getChild( c ), depth + 1 );
 }
 
 bool SDLSurface::CreateWindow()
@@ -542,6 +602,14 @@ static void TakeScreenshot( SDL_Renderer *renderer )
 
 void SDLSurface::swapBuffers()
 {
+	// overlay the debug bounds before the screenshot so they are captured too.
+	// reset the clip first, otherwise the last panel's scissor would crop them
+	if( host.drawBounds )
+	{
+		SDL_SetRenderClipRect( renderer, NULL );
+		DrawPanelBounds( renderer, getPanel(), 0 );
+	}
+
 	// must happen before present: backbuffer contents are undefined afterwards
 	if( host.screenshotRequested )
 	{

@@ -427,6 +427,20 @@ public:
 					break;
 				}
 
+				// Ctrl+R: outline every panel's bounds, Ctrl+E: label them with
+				// their class name (only visible while bounds are on)
+				if( ev.key.down && ev.key.scancode == SDL_SCANCODE_R && ( ev.key.mod & SDL_KMOD_CTRL ))
+				{
+					host.drawBounds = !host.drawBounds;
+					break;
+				}
+
+				if( ev.key.down && ev.key.scancode == SDL_SCANCODE_E && ( ev.key.mod & SDL_KMOD_CTRL ))
+				{
+					host.drawLabels = !host.drawLabels;
+					break;
+				}
+
 				KeyCode kc = ScancodeToKeyCode( ev.key.scancode );
 
 				if( kc == KeyCode::KEY_LAST )
