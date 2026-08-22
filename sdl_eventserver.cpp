@@ -100,6 +100,41 @@ static SDL_Scancode parse_key( const char *json )
 	return SDL_GetScancodeFromName( name );
 }
 
+// optional "mod" field on a key event: a string ("ctrl", "shift alt") or an
+// array (["ctrl","shift"]). Sets ev.key.mod so the app-glue hotkeys that read it
+// (Ctrl+B build mode, Ctrl+R/E overlays) fire under scripted input. VGUI's own
+// modifier tracking is separate -- it comes from the LSHIFT/LCONTROL key events,
+// so a script that also wants VGUI to see the modifier held must inject those
+// too (the harness 'chord' helper does both).
+static SDL_Keymod parse_keymod( const char *json )
+{
+	const char *p = json_find_value( json, "mod" );
+
+	if( !p )
+		return SDL_KMOD_NONE;
+
+	// bound the scan to this value only (a string ends at , or }, an array at ])
+	const char *end = ( *p == '[' ) ? strchr( p, ']' ) : strpbrk( p, ",}" );
+	size_t n = end ? (size_t)( end - p ) : strlen( p );
+	char buf[64];
+
+	if( n >= sizeof( buf ))
+		n = sizeof( buf ) - 1;
+	memcpy( buf, p, n );
+	buf[n] = '\0';
+
+	SDL_Keymod mod = SDL_KMOD_NONE;
+
+	if( strstr( buf, "ctrl" ) || strstr( buf, "control" ))
+		mod |= SDL_KMOD_CTRL;
+	if( strstr( buf, "shift" ))
+		mod |= SDL_KMOD_SHIFT;
+	if( strstr( buf, "alt" ))
+		mod |= SDL_KMOD_ALT;
+
+	return mod;
+}
+
 static void push_motion( int x, int y )
 {
 	SDL_Event ev = {};
@@ -188,6 +223,7 @@ static bool inject_event( const char *json )
 		ev.type = json_get_bool( json, "down", true ) ? SDL_EVENT_KEY_DOWN : SDL_EVENT_KEY_UP;
 		ev.key.scancode = parse_key( json );
 		ev.key.down = json_get_bool( json, "down", true );
+		ev.key.mod = parse_keymod( json );
 
 		if( ev.key.scancode == SDL_SCANCODE_UNKNOWN )
 			return false;
