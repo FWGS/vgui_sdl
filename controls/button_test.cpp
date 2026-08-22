@@ -7,6 +7,7 @@
 #include "controls/frame.h"
 #include "controls/label.h"
 #include "controls/desktop.h"
+#include "input.h"
 #include "layout.h"
 #else
 #include <VGUI_ActionSignal.h>
@@ -16,6 +17,7 @@
 #include <VGUI_Frame.h>
 #include <VGUI_Label.h>
 #include <VGUI_MiniApp.h>
+#include <VGUI_MouseCode.h>
 #include <VGUI_RadioButton.h>
 #include <VGUI_StackLayout.h>
 #include <VGUI_ToggleButton.h>
@@ -38,6 +40,45 @@ private:
 	int count = 0;
 };
 
+// drive a target button's enabled state from a checkbox
+class EnableSignal : public ActionSignal
+{
+public:
+	EnableSignal( Button *target, Button *check ) : target( target ), check( check )
+	{
+	}
+
+	void actionPerformed( Panel *panel ) override
+	{
+		target->setEnabled( check->isSelected());
+	}
+
+private:
+	Button *target;
+	Button *check;
+};
+
+// drive whether the target button reacts to mouse clicks at all
+class MouseClickSignal : public ActionSignal
+{
+public:
+	MouseClickSignal( Button *target, Button *check ) : target( target ), check( check )
+	{
+	}
+
+	void actionPerformed( Panel *panel ) override
+	{
+		bool on = check->isSelected();
+
+		for( int mc = MOUSE_LEFT; mc < MOUSE_LAST; mc++ )
+			target->setMouseClickEnabled( (MouseCode)mc, on );
+	}
+
+private:
+	Button *target;
+	Button *check;
+};
+
 class ButtonTestMiniApp : public MiniApp
 {
 public:
@@ -48,7 +89,7 @@ public:
 
 	Frame *createInstance()
 	{
-		Frame *frame = new Frame( 0, 0, 240, 400 );
+		Frame *frame = new Frame( 0, 0, 240, 460 );
 
 		frame->setTitle( "Buttons" );
 		frame->addFrameSignal( new TestFrameSignal );
@@ -63,7 +104,20 @@ public:
 		button->addActionSignal( new ClickCounterSignal( counter ));
 		client->addChild( button );
 
-		client->addChild( new ToggleButton( "ToggleButton", 0, 0 ));
+		ToggleButton *toggle = new ToggleButton( "ToggleButton", 0, 0 );
+		client->addChild( toggle );
+
+		// checkboxes that drive the toggle button's own state; both start
+		// selected to match the button's default (enabled, clickable)
+		CheckButton *enabled = new CheckButton( "setEnabled", 0, 0 );
+		enabled->setSelected( true );
+		enabled->addActionSignal( new EnableSignal( toggle, enabled ));
+		client->addChild( enabled );
+
+		CheckButton *clickable = new CheckButton( "setMouseClickEnabled", 0, 0 );
+		clickable->setSelected( true );
+		clickable->addActionSignal( new MouseClickSignal( toggle, clickable ));
+		client->addChild( clickable );
 
 		client->addChild( new CheckButton( "CheckButton A", 0, 0 ));
 		client->addChild( new CheckButton( "CheckButton B", 0, 0 ));
