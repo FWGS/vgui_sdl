@@ -300,4 +300,9 @@ DesktopIcon *CreateFrameTest();
 //
 DesktopIcon *CreateHeaderPanelTest();
 
+//
+// controls/scrollbar_test.cpp
+//
+DesktopIcon *CreateScrollBarTest();
+
 #endif // VGUI_SDL_H
