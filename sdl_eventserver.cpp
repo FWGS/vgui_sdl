@@ -175,6 +175,14 @@ static bool inject_event( const char *json )
 			return false;
 		SDL_PushEvent( &ev );
 	}
+	else if( !strcmp( type, "ignoremouse" ))
+	{
+		// make GetMousePos report the injected cursor instead of the real
+		// pointer, so a non-headless script can drag frames/sliders:
+		// {ignoremouse on} -> drag events -> {ignoremouse off}. headless mode
+		// turns this on by itself. takes effect immediately, nothing to wait for.
+		host.ignoreMouse = json_get_bool( json, "enabled", true );
+	}
 	else if( !strcmp( type, "screenshot" ))
 	{
 		host.screenshotRequested = 1;

@@ -22,6 +22,18 @@ void Sys_SetRenderScale( int scale )
 	host.scale = scale > 1 ? scale : 1;
 }
 
+// host.headless (-headless): create the window hidden so test runs don't flash
+// windows or steal focus. Rendering, screenshots (SDL_RenderReadPixels) and
+// injected input all still work; pair with SDL_VIDEODRIVER=offscreen to run
+// with no display at all. Real mouse input can't reach a hidden window, so
+// headless also forces host.ignoreMouse (GetMousePos returns the injected pos).
+void Sys_SetHeadless( bool headless )
+{
+	host.headless = headless;
+	if( headless )
+		host.ignoreMouse = true;
+}
+
 SDL_FRect SDLSurface::rect( int x0, int y0, int x1, int y1 )
 {
 	SDL_FRect frect = { (float)( x0 + origin[0] ), (float)( y0 + origin[1] ), (float)( x1 - x0 ), (float)( y1 - y0 ) };
@@ -121,7 +133,9 @@ bool SDLSurface::CreateWindow()
 
 	// the window is host.scale times the logical size; VGUI still draws at the
 	// logical size and SDL_SetRenderScale stretches it to fill the window
-	if( !SDL_CreateWindowAndRenderer( "test", wide * host.scale, tall * host.scale, 0, &window, &renderer ))
+	SDL_WindowFlags flags = host.headless ? SDL_WINDOW_HIDDEN : 0;
+
+	if( !SDL_CreateWindowAndRenderer( "test", wide * host.scale, tall * host.scale, flags, &window, &renderer ))
 	{
 		printf( "Can't create SDL window and surface: %s\n", SDL_GetError());
 		return false;
@@ -167,6 +181,12 @@ void SDLSurface::createPopup( Panel *embeddedPanel )
 
 bool SDLSurface::hasFocus()
 {
+	// a hidden (headless) window never gets real input/mouse focus, but VGUI
+	// gates focus acquisition and keyboard routing on this -- report focused so
+	// scripted runs behave identically to a normal, focused window
+	if( host.headless )
+		return true;
+
 	return SDL_GetWindowFlags( window ) & (SDL_WINDOW_INPUT_FOCUS|SDL_WINDOW_MOUSE_FOCUS);
 }
 
@@ -190,6 +210,16 @@ int SDLSurface::createNewTextureID( void )
 
 void SDLSurface::GetMousePos( int &x, int &y )
 {
+	// return the last injected cursor position instead of the real pointer, so
+	// scripted drags (frames, sliders) work; also the only sane source when the
+	// window is hidden and the real pointer can't be over it
+	if( host.ignoreMouse )
+	{
+		x = host.injMouseX;
+		y = host.injMouseY;
+		return;
+	}
+
 	float fx, fy;
 	int wx, wy;
 

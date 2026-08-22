@@ -32,11 +32,15 @@
 using namespace vgui;
 
 // global runtime state, xash3d-fwgs style: read and written directly. state
-// that needs side effects on change keeps a Sys_* setter (Sys_SetRenderScale);
-// everything else is a plain field.
+// that needs side effects on change keeps a Sys_* setter (Sys_SetHeadless,
+// Sys_SetRenderScale); everything else is a plain field.
 struct host_s
 {
 	int scale = 1;                              // -scale N nearest render scale, always >=1
+	bool headless = false;                      // -headless: window created hidden
+	bool ignoreMouse = false;                   // GetMousePos returns the injected cursor, not the real one
+	int injMouseX = 0;                          // last injected cursor, logical coords
+	int injMouseY = 0;
 	bool drawBounds = false;                    // Ctrl+R panel-bounds overlay
 	bool drawLabels = false;                    // Ctrl+E class-name labels
 	volatile sig_atomic_t screenshotRequested = 0; // set by SIGUSR1/event server, serviced in swapBuffers
@@ -148,9 +152,11 @@ public:
 SDL_Window *Sys_GetWindow( void );
 SDL_Renderer *Sys_GetRenderer( void );
 
-// keeps a setter because changing it has side effects beyond the field;
-// host.scale itself is read directly everywhere else.
+// these two keep setters because changing them has side effects beyond the
+// field; everything else (host.scale read, host.headless, host.ignoreMouse,
+// host.injMouseX/Y, host.drawBounds/drawLabels, ...) is accessed directly.
 void Sys_SetRenderScale( int scale );  // clamps to >=1
+void Sys_SetHeadless( bool headless ); // also forces ignoreMouse on
 
 //
 // controls/taskbar.cpp

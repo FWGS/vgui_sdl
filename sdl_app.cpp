@@ -372,6 +372,10 @@ public:
 				int lx = (int)ev.motion.x / host.scale;
 				int ly = (int)ev.motion.y / host.scale;
 
+				// remember it so GetMousePos can report it in ignore-mouse mode
+				// (lets scripted drags/sliders track the injected cursor)
+				host.injMouseX = lx;
+				host.injMouseY = ly;
 				internalCursorMoved( lx, ly, surface );
 				break;
 			}
@@ -519,6 +523,13 @@ int main( int argc, char *argv[] )
 	// force the software renderer (the hint is read when the renderer is created)
 	if( Sys_CheckParm( "-software" ))
 		SDL_SetHint( SDL_HINT_RENDER_DRIVER, "software" );
+
+	// create the window hidden so scripted/test runs don't flash windows or
+	// steal focus (offscreen with SDL_VIDEODRIVER=offscreen for no display).
+	// implies ignore-mouse, since a hidden window can't receive real input.
+	// non-headless scripts toggle ignore-mouse at runtime via the event server
+	if( Sys_CheckParm( "-headless" ))
+		Sys_SetHeadless( true );
 
 #ifndef _WIN32
 	signal( SIGUSR1, ScreenshotSignalHandler );
