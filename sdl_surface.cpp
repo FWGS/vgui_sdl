@@ -617,10 +617,19 @@ static void TakeScreenshot( SDL_Renderer *renderer )
 	char timestamp[32];
 	char path[256];
 
-	time_t now = time( nullptr );
-	strftime( timestamp, sizeof( timestamp ), "%Y%m%d-%H%M%S", localtime( &now ));
+	if( host.screenshotPath[0] )
+	{
+		// caller supplied an explicit filename (e.g. from a test script)
+		snprintf( path, sizeof( path ), "%s", host.screenshotPath );
+		host.screenshotPath[0] = '\0';
+	}
+	else
+	{
+		time_t now = time( nullptr );
+		strftime( timestamp, sizeof( timestamp ), "%Y%m%d-%H%M%S", localtime( &now ));
 
-	snprintf( path, sizeof( path ), "screenshot-%s-%03d.png", timestamp, counter++ );
+		snprintf( path, sizeof( path ), "screenshot-%s-%03d.png", timestamp, counter++ );
+	}
 
 	if( SDL_SavePNG( surf, path ))
 		printf( "Saved screenshot to %s\n", path );
@@ -640,11 +649,13 @@ void SDLSurface::swapBuffers()
 		DrawPanelBounds( renderer, getPanel(), 0 );
 	}
 
-	// must happen before present: backbuffer contents are undefined afterwards
+	// must happen before present: backbuffer contents are undefined afterwards.
+	// clear the flag only after the file is written, so the event server can
+	// wait on it going back to 0 and reply once the screenshot is on disk
 	if( host.screenshotRequested )
 	{
-		host.screenshotRequested = 0;
 		TakeScreenshot( renderer );
+		host.screenshotRequested = 0;
 	}
 
 	SDL_RenderPresent( renderer );

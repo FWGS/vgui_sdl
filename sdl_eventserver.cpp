@@ -172,6 +172,14 @@ static void wait_frames( void )
 		SDL_Delay( 1 );
 }
 
+// block until the pending screenshot has been written (the flag is cleared only
+// after SDL_SavePNG returns), so the HTTP reply means "the file is on disk"
+static void wait_screenshot( void )
+{
+	for( int i = 0; i < 5000 && host.screenshotRequested; i++ )
+		SDL_Delay( 1 );
+}
+
 static bool inject_event( const char *json )
 {
 	char type[32];
@@ -245,7 +253,13 @@ static bool inject_event( const char *json )
 	}
 	else if( !strcmp( type, "screenshot" ))
 	{
+		// optional "file" picks the output name, else a timestamp is used.
+		// write the path before raising the flag the render thread polls
+		if( !json_get_string( json, "file", host.screenshotPath, sizeof( host.screenshotPath )))
+			host.screenshotPath[0] = '\0';
+
 		host.screenshotRequested = 1;
+		wait_screenshot();
 	}
 	else if( !strcmp( type, "quit" ))
 	{

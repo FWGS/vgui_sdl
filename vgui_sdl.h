@@ -45,6 +45,7 @@ struct host_s
 	bool drawLabels = false;                    // Ctrl+E class-name labels
 	volatile unsigned int frameCount = 0;       // completed frames; the event server waits on this
 	volatile sig_atomic_t screenshotRequested = 0; // set by SIGUSR1/event server, serviced in swapBuffers
+	char screenshotPath[256] = "";              // explicit screenshot filename, or empty for a timestamp
 };
 
 extern host_s host;
