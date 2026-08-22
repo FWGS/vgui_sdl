@@ -402,10 +402,17 @@ public:
 				{
 					if( ev.button.down )
 					{
-						if( ev.button.clicks > 1 )
+						// SDL's clicks field is a monotonic counter that keeps
+						// climbing (1,2,3,4...) for the whole multi-click window,
+						// so testing clicks>1 would route every rapid click as a
+						// double and starve single-click widgets until it resets.
+						// Instead mirror Win32/original-VGUI: every press is a real
+						// press, and a completed double (clicks==2) delivers an
+						// extra doublePressed on top, pressed-then-double.
+						internalMousePressed( mc, surface );
+
+						if( ev.button.clicks == 2 )
 							internalMouseDoublePressed( mc, surface );
-						else
-							internalMousePressed( mc, surface );
 					}
 					else
 						internalMouseReleased( mc, surface );
