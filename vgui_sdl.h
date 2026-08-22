@@ -295,4 +295,9 @@ DesktopIcon *CreateFocusNavTest();
 //
 DesktopIcon *CreateFrameTest();
 
+//
+// controls/headerpanel_test.cpp
+//
+DesktopIcon *CreateHeaderPanelTest();
+
 #endif // VGUI_SDL_H
