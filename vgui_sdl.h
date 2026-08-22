@@ -310,4 +310,9 @@ DesktopIcon *CreateScrollBarTest();
 //
 DesktopIcon *CreateTreeFolderTest();
 
+//
+// controls/statematrix_test.cpp
+//
+DesktopIcon *CreateStateMatrixTest();
+
 #endif // VGUI_SDL_H

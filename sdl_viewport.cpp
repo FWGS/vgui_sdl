@@ -177,6 +177,7 @@ void CreateViewport( Panel *rootpanel )
 	viewport->AddIcon( CreateHeaderPanelTest( ));
 	viewport->AddIcon( CreateScrollBarTest( ));
 	viewport->AddIcon( CreateTreeFolderTest( ));
+	viewport->AddIcon( CreateStateMatrixTest( ));
 
 	viewport->GetDesktop()->arrangeIcons();
 
