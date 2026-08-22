@@ -315,4 +315,9 @@ DesktopIcon *CreateTreeFolderTest();
 //
 DesktopIcon *CreateStateMatrixTest();
 
+//
+// controls/propertypanel_test.cpp
+//
+DesktopIcon *CreatePropertyPanelTest();
+
 #endif // VGUI_SDL_H
