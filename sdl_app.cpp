@@ -495,6 +495,10 @@ int main( int argc, char *argv[] )
 
 	Sys_SetRenderScale( scale );
 
+	// force the software renderer (the hint is read when the renderer is created)
+	if( Sys_CheckParm( "-software" ))
+		SDL_SetHint( SDL_HINT_RENDER_DRIVER, "software" );
+
 #ifndef _WIN32
 	signal( SIGUSR1, ScreenshotSignalHandler );
 #endif
