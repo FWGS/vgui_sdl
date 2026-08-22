@@ -125,6 +125,18 @@ static void push_button( Uint8 button, bool down, int clicks )
 	SDL_PushEvent( &ev );
 }
 
+// block until the pushed events have been polled by the main loop and the
+// result rendered. two completed frames covers any phase the loop was in when
+// we pushed (the current frame may already be past its event poll). this is how
+// an HTTP reply signals "the event was ingested" -- no fixed sleeps needed.
+static void wait_frames( void )
+{
+	unsigned int start = host.frameCount;
+
+	for( int i = 0; i < 2000 && (unsigned int)( host.frameCount - start ) < 2; i++ )
+		SDL_Delay( 1 );
+}
+
 static bool inject_event( const char *json )
 {
 	char type[32];
@@ -132,13 +144,17 @@ static bool inject_event( const char *json )
 	if( !json_get_string( json, "type", type, sizeof( type )))
 		return false;
 
+	bool wait_render = false; // true for events whose effect we render before replying
+
 	if( !strcmp( type, "motion" ))
 	{
 		push_motion( json_get_int( json, "x", 0 ), json_get_int( json, "y", 0 ));
+		wait_render = true;
 	}
 	else if( !strcmp( type, "button" ))
 	{
 		push_button( parse_button( json ), json_get_bool( json, "down", true ), json_get_int( json, "clicks", 1 ));
+		wait_render = true;
 	}
 	else if( !strcmp( type, "click" ))
 	{
@@ -153,6 +169,7 @@ static bool inject_event( const char *json )
 			push_button( button, true, i );
 			push_button( button, false, i );
 		}
+		wait_render = true;
 	}
 	else if( !strcmp( type, "wheel" ))
 	{
@@ -162,6 +179,7 @@ static bool inject_event( const char *json )
 		ev.wheel.x = (float)json_get_int( json, "x", 0 );
 		ev.wheel.y = (float)json_get_int( json, "y", 0 );
 		SDL_PushEvent( &ev );
+		wait_render = true;
 	}
 	else if( !strcmp( type, "key" ))
 	{
@@ -174,6 +192,12 @@ static bool inject_event( const char *json )
 		if( ev.key.scancode == SDL_SCANCODE_UNKNOWN )
 			return false;
 		SDL_PushEvent( &ev );
+		wait_render = true;
+	}
+	else if( !strcmp( type, "sync" ))
+	{
+		// no-op that just waits for the render to settle; replaces fixed sleeps
+		wait_render = true;
 	}
 	else if( !strcmp( type, "ignoremouse" ))
 	{
@@ -198,6 +222,9 @@ static bool inject_event( const char *json )
 	{
 		return false;
 	}
+
+	if( wait_render )
+		wait_frames();
 
 	return true;
 }

@@ -480,6 +480,11 @@ public:
 
 			rootpanel->repaint();
 			rootpanel->paintTraverse();
+
+			// one completed frame (paintTraverse calls swapBuffers, which
+			// presents and writes any pending screenshot). the event server
+			// waits on this so HTTP replies only after the work is rendered
+			host.frameCount++;
 		}
 	}
 

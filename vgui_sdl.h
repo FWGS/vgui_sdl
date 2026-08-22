@@ -43,6 +43,7 @@ struct host_s
 	int injMouseY = 0;
 	bool drawBounds = false;                    // Ctrl+R panel-bounds overlay
 	bool drawLabels = false;                    // Ctrl+E class-name labels
+	volatile unsigned int frameCount = 0;       // completed frames; the event server waits on this
 	volatile sig_atomic_t screenshotRequested = 0; // set by SIGUSR1/event server, serviced in swapBuffers
 };
 
