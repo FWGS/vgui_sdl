@@ -25,6 +25,11 @@ def configure(conf):
 
 	conf.force_32bit()
 
+	cflags, linkflags = conf.get_optimization_flags()
+	conf.env.append_value('CFLAGS', cflags)
+	conf.env.append_value('CXXFLAGS', cflags)
+	conf.env.append_value('LINKFLAGS', linkflags)
+
 	conf.load('sdl2 vgui')
 	conf.check_vgui()
 
