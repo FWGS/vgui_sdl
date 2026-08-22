@@ -1,12 +1,21 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "vgui_sdl.h"
+#if USE_FREEVGUI_HEADERS
+#include "signals.h"
+#include "panel.h"
+#include "controls/frame.h"
+#include "controls/label.h"
+#include "controls/desktop.h"
+#include "controls/text.h"
+#else
 #include <VGUI_FocusChangeSignal.h>
 #include <VGUI_FocusNavGroup.h>
 #include <VGUI_Frame.h>
 #include <VGUI_Label.h>
 #include <VGUI_MiniApp.h>
 #include <VGUI_TextEntry.h>
+#endif
 
 class FieldFocusSignal : public FocusChangeSignal
 {

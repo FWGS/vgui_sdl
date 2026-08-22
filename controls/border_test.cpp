@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "vgui_sdl.h"
+#if USE_FREEVGUI_HEADERS
+#include "image.h"
+#include "controls/frame.h"
+#include "controls/label.h"
+#include "controls/desktop.h"
+#else
 #include <VGUI_BorderPair.h>
 #include <VGUI_EtchedBorder.h>
 #include <VGUI_Frame.h>
@@ -9,6 +15,7 @@
 #include <VGUI_LoweredBorder.h>
 #include <VGUI_MiniApp.h>
 #include <VGUI_RaisedBorder.h>
+#endif
 
 class BorderTestMiniApp : public MiniApp
 {

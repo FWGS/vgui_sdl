@@ -1,11 +1,19 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "vgui_sdl.h"
+#if USE_FREEVGUI_HEADERS
+#include "layout.h"
+#include "controls/frame.h"
+#include "controls/label.h"
+#include "controls/desktop.h"
+#include "controls/scroll.h"
+#else
 #include <VGUI_BorderLayout.h>
 #include <VGUI_Frame.h>
 #include <VGUI_Label.h>
 #include <VGUI_MiniApp.h>
 #include <VGUI_ScrollPanel.h>
+#endif
 
 class ScrollPanelTestMiniApp : public MiniApp
 {
@@ -26,7 +34,11 @@ public:
 		frame->getClient()->setLayout( layout );
 
 		ScrollPanel *scroll = new ScrollPanel( 0, 0, 64, 64 );
+#if USE_FREEVGUI_HEADERS
+		scroll->setLayoutInfo( layout->createLayoutInfo( BorderLayout::CENTER ));
+#else
 		scroll->setLayoutInfo( layout->createLayoutInfo( BorderLayout::a_center ));
+#endif
 		frame->getClient()->addChild( scroll );
 
 		// more content than the clip area can show, so the vertical

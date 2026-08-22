@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "vgui_sdl.h"
+#if USE_FREEVGUI_HEADERS
+#include "signals.h"
+#include "controls/button.h"
+#include "controls/frame.h"
+#include "controls/label.h"
+#include "controls/desktop.h"
+#include "layout.h"
+#else
 #include <VGUI_ActionSignal.h>
 #include <VGUI_Button.h>
 #include <VGUI_ButtonGroup.h>
@@ -11,6 +19,7 @@
 #include <VGUI_RadioButton.h>
 #include <VGUI_StackLayout.h>
 #include <VGUI_ToggleButton.h>
+#endif
 
 class ClickCounterSignal : public ActionSignal
 {

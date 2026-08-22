@@ -1,9 +1,15 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "vgui_sdl.h"
+#if USE_FREEVGUI_HEADERS
+#include "signals.h"
+#include "controls/messagebox.h"
+#include "controls/desktop.h"
+#else
 #include <VGUI_ActionSignal.h>
 #include <VGUI_MessageBox.h>
 #include <VGUI_MiniApp.h>
+#endif
 
 // the stock Ok button only fires the box's ActionSignal subscribers, dismissing the dialog is the app's job
 class MessageBoxOkSignal : public ActionSignal

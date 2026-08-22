@@ -1,12 +1,19 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "apps.h"
+#if USE_FREEVGUI_HEADERS
+#include "signals.h"
+#include "controls/button.h"
+#include "controls/menu.h"
+#include "controls/desktop.h"
+#else
 #include <VGUI_ActionSignal.h>
 #include <VGUI_Button.h>
 #include <VGUI_Menu.h>
 #include <VGUI_MenuItem.h>
 #include <VGUI_MenuSeparator.h>
 #include <VGUI_MiniApp.h>
+#endif
 
 static DesktopIcon *(*const s_apps[])() =
 {

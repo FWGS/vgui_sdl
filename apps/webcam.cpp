@@ -1,11 +1,19 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "apps.h"
+#if USE_FREEVGUI_HEADERS
+#include "controls/frame.h"
+#include "controls/label.h"
+#include "controls/desktop.h"
+#include "panel.h"
+#include "layout.h"
+#else
 #include <VGUI_Frame.h>
 #include <VGUI_Label.h>
 #include <VGUI_MiniApp.h>
 #include <VGUI_Panel.h>
 #include <VGUI_StackLayout.h>
+#endif
 
 // this purely works because VGUI is redrawn every frame by our Surface.
 // I think the intention was to let VGUI only update when necessary
@@ -92,7 +100,11 @@ public:
 		client->addChild( view );
 
 		Label *status = new Label( "", 0, 0, 320, 20 );
+#if USE_FREEVGUI_HEADERS
+		status->setContentAlignment( Label::LEFT );
+#else
 		status->setContentAlignment( Label::a_west );
+#endif
 		status->setContentFitted( false );
 		client->addChild( status );
 

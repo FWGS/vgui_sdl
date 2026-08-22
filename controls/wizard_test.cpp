@@ -1,6 +1,15 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "vgui_sdl.h"
+#if USE_FREEVGUI_HEADERS
+#include "signals.h"
+#include "controls/button.h"
+#include "controls/frame.h"
+#include "controls/label.h"
+#include "controls/desktop.h"
+#include "controls/text.h"
+#include "controls/wizard.h"
+#else
 #include <VGUI_ActionSignal.h>
 #include <VGUI_CheckButton.h>
 #include <VGUI_Frame.h>
@@ -8,6 +17,7 @@
 #include <VGUI_MiniApp.h>
 #include <VGUI_TextEntry.h>
 #include <VGUI_WizardPanel.h>
+#endif
 
 class WizardStatusSignal : public ActionSignal
 {

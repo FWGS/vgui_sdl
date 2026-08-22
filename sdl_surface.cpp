@@ -1,5 +1,9 @@
 #include "vgui_sdl.h"
+#if USE_FREEVGUI_HEADERS
+#include "font.h"
+#else
 #include <VGUI_Font.h>
+#endif
 #include <ctype.h>
 #include <time.h>
 
@@ -359,13 +363,21 @@ void SDLSurface::setCursor( Cursor *cursor )
 {
 	Cursor::DefaultCursor dc = cursor->getDefaultCursor();
 
+#if USE_FREEVGUI_HEADERS
+	if( dc == Cursor::DC_USER )
+#else
 	if( dc == Cursor::dc_user )
+#endif
 	{
 		printf( "%s( bitmap cursor ): unimplemented\n", __PRETTY_FUNCTION__ );
 		return;
 	}
 
+#if USE_FREEVGUI_HEADERS
+	if( dc == Cursor::DC_NONE )
+#else
 	if( dc == Cursor::dc_none )
+#endif
 	{
 		SDL_HideCursor();
 		return;
@@ -374,41 +386,93 @@ void SDLSurface::setCursor( Cursor *cursor )
 	SDL_SystemCursor sc;
 	switch( dc )
 	{
+#if USE_FREEVGUI_HEADERS
+	case Cursor::DC_ARROW:
+#else
 	case Cursor::dc_arrow:
+#endif
+#if USE_FREEVGUI_HEADERS
+	case Cursor::DC_LAST:
+#else
 	case Cursor::dc_last:
+#endif
 		sc = SDL_SYSTEM_CURSOR_DEFAULT;
 		break;
+#if USE_FREEVGUI_HEADERS
+	case Cursor::DC_IBEAM:
+#else
 	case Cursor::dc_ibeam:
+#endif
 		sc = SDL_SYSTEM_CURSOR_TEXT;
 		break;
+#if USE_FREEVGUI_HEADERS
+	case Cursor::DC_HOURGLASS:
+#else
 	case Cursor::dc_hourglass:
+#endif
 		sc = SDL_SYSTEM_CURSOR_WAIT;
 		break;
+#if USE_FREEVGUI_HEADERS
+	case Cursor::DC_CROSSHAIR:
+#else
 	case Cursor::dc_crosshair:
+#endif
 		sc = SDL_SYSTEM_CURSOR_CROSSHAIR;
 		break;
+#if USE_FREEVGUI_HEADERS
+	case Cursor::DC_UP:
+#else
 	case Cursor::dc_up:
+#endif
 		sc = SDL_SYSTEM_CURSOR_DEFAULT; // wtf is UP???
 		break;
+#if USE_FREEVGUI_HEADERS
+	case Cursor::DC_SIZENWSE:
+#else
 	case Cursor::dc_sizenwse:
+#endif
 		sc = SDL_SYSTEM_CURSOR_NWSE_RESIZE;
 		break;
+#if USE_FREEVGUI_HEADERS
+	case Cursor::DC_SIZENESW:
+#else
 	case Cursor::dc_sizenesw:
+#endif
 		sc = SDL_SYSTEM_CURSOR_NESW_RESIZE;
 		break;
+#if USE_FREEVGUI_HEADERS
+	case Cursor::DC_SIZEWE:
+#else
 	case Cursor::dc_sizewe:
+#endif
 		sc = SDL_SYSTEM_CURSOR_EW_RESIZE;
 		break;
+#if USE_FREEVGUI_HEADERS
+	case Cursor::DC_SIZENS:
+#else
 	case Cursor::dc_sizens:
+#endif
 		sc = SDL_SYSTEM_CURSOR_NS_RESIZE;
 		break;
+#if USE_FREEVGUI_HEADERS
+	case Cursor::DC_SIZEALL:
+#else
 	case Cursor::dc_sizeall:
+#endif
 		sc = SDL_SYSTEM_CURSOR_MOVE;
 		break;
+#if USE_FREEVGUI_HEADERS
+	case Cursor::DC_NO:
+#else
 	case Cursor::dc_no:
+#endif
 		sc = SDL_SYSTEM_CURSOR_NOT_ALLOWED;
 		break;
+#if USE_FREEVGUI_HEADERS
+	case Cursor::DC_HAND:
+#else
 	case Cursor::dc_hand:
+#endif
 		sc = SDL_SYSTEM_CURSOR_POINTER;
 		break;
 	default:

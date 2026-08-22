@@ -1,11 +1,19 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "vgui_sdl.h"
+#if USE_FREEVGUI_HEADERS
+#include "signals.h"
+#include "controls/button.h"
+#include "controls/frame.h"
+#include "controls/desktop.h"
+#include "controls/progressbar.h"
+#else
 #include <VGUI_ActionSignal.h>
 #include <VGUI_Button.h>
 #include <VGUI_Frame.h>
 #include <VGUI_MiniApp.h>
 #include <VGUI_ProgressBar.h>
+#endif
 
 // progress is not a 0..1 fraction, it's segments >_<
 class ProgressStepSignal : public ActionSignal

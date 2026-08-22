@@ -1,11 +1,19 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "vgui_sdl.h"
+#if USE_FREEVGUI_HEADERS
+#include "controls/frame.h"
+#include "controls/image.h"
+#include "controls/label.h"
+#include "controls/desktop.h"
+#include "image.h"
+#else
 #include <VGUI_Frame.h>
 #include <VGUI_ImagePanel.h>
 #include <VGUI_Label.h>
 #include <VGUI_MiniApp.h>
 #include <VGUI_TextImage.h>
+#endif
 
 class ImagePanelTestMiniApp : public MiniApp
 {
@@ -30,7 +38,11 @@ public:
 		client->addChild( bitmap );
 
 		TextImage *text = new TextImage( "TextImage in an ImagePanel" );
+#if USE_FREEVGUI_HEADERS
+		text->setFont( Scheme::SF_PRIMARY2 );
+#else
 		text->setFont( Scheme::sf_primary2 );
+#endif
 
 		int wide, tall;
 		text->getTextSize( wide, tall );

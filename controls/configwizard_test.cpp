@@ -1,6 +1,15 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "vgui_sdl.h"
+#if USE_FREEVGUI_HEADERS
+#include "signals.h"
+#include "controls/button.h"
+#include "controls/configwizard.h"
+#include "controls/frame.h"
+#include "controls/label.h"
+#include "controls/desktop.h"
+#include "controls/treefolder.h"
+#else
 #include <VGUI_ActionSignal.h>
 #include <VGUI_Button.h>
 #include <VGUI_ConfigWizard.h>
@@ -8,6 +17,7 @@
 #include <VGUI_Label.h>
 #include <VGUI_MiniApp.h>
 #include <VGUI_TreeFolder.h>
+#endif
 
 // the Ok/Cancel/Apply/Help buttons are protected with no getters, expose them the usual way like in ListPanel
 class ConfigWizardEx : public ConfigWizard
@@ -19,22 +29,38 @@ public:
 
 	Button *getOkButton()
 	{
+#if USE_FREEVGUI_HEADERS
+		return okButton;
+#else
 		return _okButton;
+#endif
 	}
 
 	Button *getCancelButton()
 	{
+#if USE_FREEVGUI_HEADERS
+		return cancelButton;
+#else
 		return _cancelButton;
+#endif
 	}
 
 	Button *getApplyButton()
 	{
+#if USE_FREEVGUI_HEADERS
+		return applyButton;
+#else
 		return _applyButton;
+#endif
 	}
 
 	Button *getHelpButton()
 	{
+#if USE_FREEVGUI_HEADERS
+		return helpButton;
+#else
 		return _helpButton;
+#endif
 	}
 };
 

@@ -1,11 +1,19 @@
 #include "vgui_sdl.h"
 #include "apps/apps.h"
+#if USE_FREEVGUI_HEADERS
+#include "controls/desktop.h"
+#include "image.h"
+#include "inputstream.h"
+#include "controls/frame.h"
+#include "controls/label.h"
+#else
 #include <VGUI_Desktop.h>
 #include <VGUI_DesktopIcon.h>
 #include <VGUI_BitmapTGA.h>
 #include <VGUI_FileInputStream.h>
 #include <VGUI_Frame.h>
 #include <VGUI_Label.h>
+#endif
 
 Image *LoadTGA( const char *path )
 {
@@ -32,23 +40,39 @@ public:
 
 		// vgui can't load system fonts, so grab temporary bitmap fonts
 		file = SDL_LoadFile( "fonts/primary1.tga", &size );
+#if USE_FREEVGUI_HEADERS
+		rootpanel->getApp()->getScheme()->setFont( Scheme::SF_PRIMARY1,
+#else
 		rootpanel->getApp()->getScheme()->setFont( Scheme::sf_primary1,
+#endif
 		        new Font( "Arial", file, size, 23, 0, 0, 0, false, false, false, false ));
 		SDL_free( file );
 
 		file = SDL_LoadFile( "fonts/primary2.tga", &size );
+#if USE_FREEVGUI_HEADERS
+		rootpanel->getApp()->getScheme()->setFont( Scheme::SF_PRIMARY2,
+#else
 		rootpanel->getApp()->getScheme()->setFont( Scheme::sf_primary2,
+#endif
 		        new Font( "Arial", file, size, 18, 0, 0, 0, false, false, false, false ));
 		SDL_free( file );
 
 		// vgui::Frame wants marlett font at sf_secondary1
 		file = SDL_LoadFile( "fonts/marlett.tga", &size );
+#if USE_FREEVGUI_HEADERS
+		rootpanel->getApp()->getScheme()->setFont( Scheme::SF_SECONDARY,
+#else
 		rootpanel->getApp()->getScheme()->setFont( Scheme::sf_secondary1,
+#endif
 		        new Font( "Marlett", file, size, 12, 0, 0, 0, false, false, false, false ));
 		SDL_free( file );
 
 		file = SDL_LoadFile( "fonts/primary3.tga", &size );
+#if USE_FREEVGUI_HEADERS
+		rootpanel->getApp()->getScheme()->setFont( Scheme::SF_PRIMARY3,
+#else
 		rootpanel->getApp()->getScheme()->setFont( Scheme::sf_primary3,
+#endif
 		        new Font( "Arial", file, size, 21, 0, 0, 0, false, false, false, false ));
 		SDL_free( file );
 

@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "vgui_sdl.h"
+#if USE_FREEVGUI_HEADERS
+#include "controls/edit.h"
+#include "controls/frame.h"
+#include "controls/label.h"
+#include "controls/desktop.h"
+#include "layout.h"
+#include "controls/text.h"
+#else
 #include <VGUI_EditPanel.h>
 #include <VGUI_Frame.h>
 #include <VGUI_Label.h>
@@ -9,6 +17,7 @@
 #include <VGUI_TextEntry.h>
 #include <VGUI_TextGrid.h>
 #include <VGUI_TextPanel.h>
+#endif
 
 // one frame for the whole char-based text family:
 // * TextEntry (single line)

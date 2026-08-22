@@ -2,6 +2,15 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+#if USE_FREEVGUI_HEADERS
+#include "vgui.h"
+#include "app.h"
+#include "panel.h"
+#include "input.h"
+#include "controls/desktop.h"
+#include "controls/frame.h"
+#include "font.h"
+#else
 #include <VGUI.h>
 #include <VGUI_App.h>
 #include <VGUI_Panel.h>
@@ -13,6 +22,7 @@
 #include <VGUI_Font.h>
 #include <VGUI_MouseCode.h>
 #include <VGUI_KeyCode.h>
+#endif
 #include <stdio.h>
 #include <ctype.h>
 #include <vector>
@@ -205,7 +215,11 @@ public:
 		rootpanel->setPaintBackgroundEnabled( false );
 		rootpanel->setPaintBorderEnabled( false );
 		rootpanel->setVisible( true );
+#if USE_FREEVGUI_HEADERS
+		rootpanel->setCursor( new Cursor( Cursor::DC_NONE ));
+#else
 		rootpanel->setCursor( new Cursor( Cursor::dc_none ));
+#endif
 
 		return true;
 	}

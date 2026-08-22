@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "apps.h"
+#if USE_FREEVGUI_HEADERS
+#include "signals.h"
+#include "controls/button.h"
+#include "layout.h"
+#include "controls/frame.h"
+#include "controls/label.h"
+#include "controls/desktop.h"
+#else
 #include <VGUI_ActionSignal.h>
 #include <VGUI_Button.h>
 #include <VGUI_FlowLayout.h>
@@ -8,6 +16,7 @@
 #include <VGUI_Label.h>
 #include <VGUI_MiniApp.h>
 #include <VGUI_StackLayout.h>
+#endif
 
 // too lazy to make it proper into some grid like layout
 // (gridlayout is dead API btw	)
@@ -121,7 +130,11 @@ private:
 	{
 		Label *label = new Label( text, 0, 0, wide, ROW_TALL );
 
+#if USE_FREEVGUI_HEADERS
+		label->setContentAlignment( Label::LEFT );
+#else
 		label->setContentAlignment( Label::a_west );
+#endif
 		label->setContentFitted( false ); // keep our width so the flow columns line up
 		return label;
 	}

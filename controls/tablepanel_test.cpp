@@ -1,6 +1,16 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "vgui_sdl.h"
+#if USE_FREEVGUI_HEADERS
+#include "signals.h"
+#include "controls/button.h"
+#include "controls/frame.h"
+#include "controls/header.h"
+#include "controls/label.h"
+#include "controls/desktop.h"
+#include "controls/table.h"
+#include "controls/text.h"
+#else
 #include <VGUI_ActionSignal.h>
 #include <VGUI_CheckButton.h>
 #include <VGUI_Frame.h>
@@ -9,6 +19,7 @@
 #include <VGUI_MiniApp.h>
 #include <VGUI_TablePanel.h>
 #include <VGUI_TextEntry.h>
+#endif
 
 static char s_cells[][3][16] =
 {

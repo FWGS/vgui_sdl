@@ -1,11 +1,19 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "vgui_sdl.h"
+#if USE_FREEVGUI_HEADERS
+#include "controls/frame.h"
+#include "signals.h"
+#include "controls/label.h"
+#include "controls/desktop.h"
+#include "controls/scroll.h"
+#else
 #include <VGUI_Frame.h>
 #include <VGUI_IntChangeSignal.h>
 #include <VGUI_Label.h>
 #include <VGUI_MiniApp.h>
 #include <VGUI_Slider.h>
+#endif
 
 class IntValueLabelSignal : public IntChangeSignal
 {

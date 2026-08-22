@@ -17,6 +17,10 @@ Context.Context.line_just = 55 # should fit for everything on 80x26
 def options(opt):
 	opt.load('compiler_c compiler_cxx compiler_optimizations force_32bit sdl2 vgui clang_compilation_database')
 
+	grp = opt.add_option_group('vgui_sdl options')
+	grp.add_option('--enable-stock-vgui-headers', action = 'store_true', dest = 'STOCK_VGUI_HEADERS', default = False,
+		help = 'compile the testbed against the proprietary vgui-dev headers instead of FreeVGUI\'s own headers [default: FreeVGUI]')
+
 def configure(conf):
 	conf.options.SDL3 = True
 	conf.options.ENABLE_UNSUPPORTED_VGUI = True
@@ -32,6 +36,17 @@ def configure(conf):
 
 	conf.load('sdl2 vgui')
 	conf.check_vgui()
+
+	# dogfood FreeVGUI's own public headers by default; --stock-vgui-headers uses
+	# the proprietary vgui-dev headers instead. vgui.so is runtime-selected either
+	# way, so this only changes which headers the testbed compiles against. When on,
+	# point the VGUI include path at freevgui/ ONLY (its public headers must stand
+	# alone -- no libpublic/miniutl on the consumer's path).
+	use_freevgui_headers = not conf.options.STOCK_VGUI_HEADERS
+	conf.msg('Testbed compiles against', 'FreeVGUI headers' if use_freevgui_headers else 'stock vgui-dev headers')
+	conf.env.append_value('DEFINES', 'USE_FREEVGUI_HEADERS=%d' % (1 if use_freevgui_headers else 0))
+	if use_freevgui_headers:
+		conf.env.INCLUDES_VGUI = [conf.path.find_dir('freevgui').abspath()]
 
 	conf.recurse('freevgui')
 

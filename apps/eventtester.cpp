@@ -1,6 +1,15 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "apps.h"
+#if USE_FREEVGUI_HEADERS
+#include "signals.h"
+#include "controls/frame.h"
+#include "controls/label.h"
+#include "image.h"
+#include "controls/desktop.h"
+#include "panel.h"
+#include "layout.h"
+#else
 #include <VGUI_FocusChangeSignal.h>
 #include <VGUI_Frame.h>
 #include <VGUI_InputSignal.h>
@@ -9,6 +18,7 @@
 #include <VGUI_MiniApp.h>
 #include <VGUI_Panel.h>
 #include <VGUI_StackLayout.h>
+#endif
 #include <stdarg.h>
 
 #define LOG_LINES 12
@@ -178,7 +188,11 @@ private:
 	{
 		Label *label = new Label( text, 0, 0, wide, ROW_TALL );
 
+#if USE_FREEVGUI_HEADERS
+		label->setContentAlignment( Label::LEFT );
+#else
 		label->setContentAlignment( Label::a_west );
+#endif
 		label->setContentFitted( false );
 		return label;
 	}

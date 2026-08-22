@@ -1,6 +1,17 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "apps.h"
+#if USE_FREEVGUI_HEADERS
+#include "signals.h"
+#include "layout.h"
+#include "controls/button.h"
+#include "font.h"
+#include "controls/frame.h"
+#include "controls/label.h"
+#include "controls/desktop.h"
+#include "scheme.h"
+#include "controls/tab.h"
+#else
 #include <VGUI_ActionSignal.h>
 #include <VGUI_BorderLayout.h>
 #include <VGUI_Button.h>
@@ -12,6 +23,7 @@
 #include <VGUI_Scheme.h>
 #include <VGUI_StackLayout.h>
 #include <VGUI_TabPanel.h>
+#endif
 
 #define ROW_TALL 18
 
@@ -21,10 +33,26 @@ static const struct FontSlot
 	const char *name;
 } s_fonts[] =
 {
+#if USE_FREEVGUI_HEADERS
+	{ Scheme::SF_PRIMARY1, "primary1" },
+#else
 	{ Scheme::sf_primary1, "primary1" },
+#endif
+#if USE_FREEVGUI_HEADERS
+	{ Scheme::SF_PRIMARY2, "primary2" },
+#else
 	{ Scheme::sf_primary2, "primary2" },
+#endif
+#if USE_FREEVGUI_HEADERS
+	{ Scheme::SF_PRIMARY3, "primary3" },
+#else
 	{ Scheme::sf_primary3, "primary3" },
+#endif
+#if USE_FREEVGUI_HEADERS
+	{ Scheme::SF_SECONDARY, "secondary1" },
+#else
 	{ Scheme::sf_secondary1, "secondary1" },
+#endif
 };
 
 struct ColorSlot
@@ -33,14 +61,46 @@ struct ColorSlot
 	const char *name;
 } s_colors[] =
 {
+#if USE_FREEVGUI_HEADERS
+	{ Scheme::SC_BLACK, "black" },
+#else
 	{ Scheme::sc_black, "black" },
+#endif
+#if USE_FREEVGUI_HEADERS
+	{ Scheme::SC_WHITE, "white" },
+#else
 	{ Scheme::sc_white, "white" },
+#endif
+#if USE_FREEVGUI_HEADERS
+	{ Scheme::SC_PRIMARY1, "primary1" },
+#else
 	{ Scheme::sc_primary1, "primary1" },
+#endif
+#if USE_FREEVGUI_HEADERS
+	{ Scheme::SC_PRIMARY2, "primary2" },
+#else
 	{ Scheme::sc_primary2, "primary2" },
+#endif
+#if USE_FREEVGUI_HEADERS
+	{ Scheme::SC_PRIMARY3, "primary3" },
+#else
 	{ Scheme::sc_primary3, "primary3" },
+#endif
+#if USE_FREEVGUI_HEADERS
+	{ Scheme::SC_SECONDARY1, "secondary1" },
+#else
 	{ Scheme::sc_secondary1, "secondary1" },
+#endif
+#if USE_FREEVGUI_HEADERS
+	{ Scheme::SC_SECONDARY2, "secondary2" },
+#else
 	{ Scheme::sc_secondary2, "secondary2" },
+#endif
+#if USE_FREEVGUI_HEADERS
+	{ Scheme::SC_SECONDARY3, "secondary3" },
+#else
 	{ Scheme::sc_secondary3, "secondary3" },
+#endif
 };
 
 #define NUM_FONTS ( (int)( sizeof( s_fonts ) / sizeof( s_fonts[0] )))
@@ -77,7 +137,11 @@ public:
 		client->setLayout( border );
 
 		TabPanel *tabs = new TabPanel( 0, 0, 10, 10 );
+#if USE_FREEVGUI_HEADERS
+		tabs->setLayoutInfo( border->createLayoutInfo( BorderLayout::CENTER ));
+#else
 		tabs->setLayoutInfo( border->createLayoutInfo( BorderLayout::a_center ));
+#endif
 		client->addChild( tabs );
 
 		Panel *schemeTab = tabs->addTab( "Scheme" );
@@ -127,7 +191,11 @@ private:
 	{
 		Label *label = new Label( text, 0, 0, wide, ROW_TALL );
 
+#if USE_FREEVGUI_HEADERS
+		label->setContentAlignment( Label::LEFT );
+#else
 		label->setContentAlignment( Label::a_west );
+#endif
 		label->setContentFitted( false );
 		return label;
 	}

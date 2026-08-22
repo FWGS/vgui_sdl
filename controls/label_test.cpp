@@ -1,9 +1,16 @@
 #include "vgui_sdl.h"
+#if USE_FREEVGUI_HEADERS
+#include "layout.h"
+#include "controls/desktop.h"
+#include "controls/frame.h"
+#include "controls/label.h"
+#else
 #include <VGUI_BorderLayout.h>
 #include <VGUI_DesktopIcon.h>
 #include <VGUI_Frame.h>
 #include <VGUI_Label.h>
 #include <VGUI_MiniApp.h>
+#endif
 
 class LabelTestMiniApp : public MiniApp
 {
@@ -25,7 +32,11 @@ public:
 		frame->getClient()->setLayout( layout );
 
 		Label *label = new Label( "Hello World!" );
+#if USE_FREEVGUI_HEADERS
+		label->setLayoutInfo( layout->createLayoutInfo( BorderLayout::CENTER ));
+#else
 		label->setLayoutInfo( layout->createLayoutInfo( BorderLayout::a_center ));
+#endif
 
 		frame->getClient()->addChild( label );
 

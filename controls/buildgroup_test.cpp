@@ -1,6 +1,16 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 
 #include "vgui_sdl.h"
+#if USE_FREEVGUI_HEADERS
+#include "signals.h"
+#include "buildgroup.h"
+#include "controls/button.h"
+#include "controls/edit.h"
+#include "controls/frame.h"
+#include "controls/label.h"
+#include "controls/desktop.h"
+#include "controls/text.h"
+#else
 #include <VGUI_ActionSignal.h>
 #include <VGUI_BuildGroup.h>
 #include <VGUI_Button.h>
@@ -10,6 +20,7 @@
 #include <VGUI_Label.h>
 #include <VGUI_MiniApp.h>
 #include <VGUI_TextPanel.h>
+#endif
 
 class PasteSignal : public ActionSignal
 {

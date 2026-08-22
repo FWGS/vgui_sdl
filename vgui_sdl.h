@@ -3,6 +3,16 @@
 #define VGUI_SDL_H
 
 #include <SDL3/SDL.h>
+#if USE_FREEVGUI_HEADERS
+#include "vgui.h"
+#include "app.h"
+#include "buildgroup.h"
+#include "controls/desktop.h"
+#include "font.h"
+#include "signals.h"
+#include "panel.h"
+#include "surface.h"
+#else
 #include <VGUI.h>
 #include <VGUI_App.h>
 #include <VGUI_BuildGroup.h>
@@ -13,7 +23,9 @@
 #include <VGUI_Panel.h>
 #include <VGUI_SurfaceBase.h>
 #include <VGUI_TaskBar.h>
+#endif
 #include <vector>
+#include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
 
