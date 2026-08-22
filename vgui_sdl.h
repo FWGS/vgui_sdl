@@ -31,8 +31,13 @@
 
 using namespace vgui;
 
-// set from SIGUSR1 handler, serviced in SDLSurface::swapBuffers
-extern volatile sig_atomic_t g_screenshot_requested;
+// global runtime state, xash3d-fwgs style: read and written directly.
+struct host_s
+{
+	volatile sig_atomic_t screenshotRequested = 0; // set by SIGUSR1/event server, serviced in swapBuffers
+};
+
+extern host_s host;
 
 constexpr int MAX_TEXTURES = 4096;
 

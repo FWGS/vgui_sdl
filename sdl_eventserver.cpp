@@ -173,7 +173,7 @@ static bool inject_event( const char *json )
 	}
 	else if( !strcmp( type, "screenshot" ))
 	{
-		g_screenshot_requested = 1;
+		host.screenshotRequested = 1;
 	}
 	else if( !strcmp( type, "quit" ))
 	{

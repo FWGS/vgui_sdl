@@ -32,6 +32,9 @@ static int sys_argc;
 static char **sys_argv;
 static std::vector<BuildGroup *> g_buildgroups;
 
+// the one global host state instance (declared in vgui_sdl.h)
+host_s host;
+
 void BuildMode_Register( BuildGroup *bg )
 {
 	g_buildgroups.push_back( bg );
@@ -461,7 +464,7 @@ private:
 #ifndef _WIN32
 static void ScreenshotSignalHandler( int )
 {
-	g_screenshot_requested = 1;
+	host.screenshotRequested = 1;
 }
 #endif
 

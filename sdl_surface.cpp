@@ -7,8 +7,6 @@
 #include <ctype.h>
 #include <time.h>
 
-volatile sig_atomic_t g_screenshot_requested = 0;
-
 static SDL_Window *s_window;
 static SDL_Renderer *s_renderer;
 
@@ -524,9 +522,9 @@ static void TakeScreenshot( SDL_Renderer *renderer )
 void SDLSurface::swapBuffers()
 {
 	// must happen before present: backbuffer contents are undefined afterwards
-	if( g_screenshot_requested )
+	if( host.screenshotRequested )
 	{
-		g_screenshot_requested = 0;
+		host.screenshotRequested = 0;
 		TakeScreenshot( renderer );
 	}
 
