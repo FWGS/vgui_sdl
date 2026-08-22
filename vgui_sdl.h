@@ -290,4 +290,9 @@ DesktopIcon *CreateBuildGroupTest();
 //
 DesktopIcon *CreateFocusNavTest();
 
+//
+// controls/frame_test.cpp
+//
+DesktopIcon *CreateFrameTest();
+
 #endif // VGUI_SDL_H

@@ -173,6 +173,7 @@ void CreateViewport( Panel *rootpanel )
 	viewport->AddIcon( CreateBorderTest( ));
 	viewport->AddIcon( CreateBuildGroupTest( ));
 	viewport->AddIcon( CreateFocusNavTest( ));
+	viewport->AddIcon( CreateFrameTest( ));
 
 	viewport->GetDesktop()->arrangeIcons();
 
