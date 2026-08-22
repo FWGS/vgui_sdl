@@ -305,4 +305,9 @@ DesktopIcon *CreateHeaderPanelTest();
 //
 DesktopIcon *CreateScrollBarTest();
 
+//
+// controls/treefolder_test.cpp
+//
+DesktopIcon *CreateTreeFolderTest();
+
 #endif // VGUI_SDL_H
