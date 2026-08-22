@@ -262,13 +262,49 @@ static void handle_client( socket_t client )
 	closesocket( client );
 }
 
+// accept loop; the listening socket is already bound by EventServer_Start
 static int EventServerThread( void *data )
 {
-	int port = (int)(intptr_t)data;
+	socket_t server = (socket_t)(intptr_t)data;
+
+	for( ;; )
+	{
+		socket_t client = accept( server, nullptr, nullptr );
+
+		if( client != INVALID_SOCKET )
+			handle_client( client );
+	}
+
+	return 0;
+}
+
+// returns false only when the server was required but couldn't start; the caller
+// treats that as fatal. bind happens synchronously here (not in the thread) so a
+// taken port is detected before the app runs
+bool EventServer_Start( void )
+{
+	const char *env = SDL_getenv( "VGUI_EVENT_PORT" );
+	int port = env ? atoi( env ) : 4938;
+
+	if( port <= 0 )
+		return true; // VGUI_EVENT_PORT=0 disables the server
+
+	// in headless there is no other way to drive or screenshot the app, and a
+	// port collision would otherwise leave us talking to a *different* instance
+	// (e.g. a parallel run on the same port), so a failure here must be fatal
+	bool fatal = host.headless;
+
+#ifdef _WIN32
+	WSADATA wsa;
+
+	if( WSAStartup( MAKEWORD( 2, 2 ), &wsa ))
+		return !fatal;
+#endif
+
 	socket_t server = socket( AF_INET, SOCK_STREAM, 0 );
 
 	if( server == INVALID_SOCKET )
-		return 1;
+		return !fatal;
 
 	int on = 1;
 	setsockopt( server, SOL_SOCKET, SO_REUSEADDR, (const char *)&on, sizeof( on ));
@@ -282,38 +318,13 @@ static int EventServerThread( void *data )
 	{
 		printf( "Event server: can't listen on port %d\n", port );
 		closesocket( server );
-		return 1;
+		return !fatal;
 	}
 
 	printf( "Event server listening on http://127.0.0.1:%d\n", port );
 
-	for( ;; )
-	{
-		socket_t client = accept( server, nullptr, nullptr );
-
-		if( client != INVALID_SOCKET )
-			handle_client( client );
-	}
-
-	return 0;
-}
-
-void EventServer_Start( void )
-{
-	const char *env = SDL_getenv( "VGUI_EVENT_PORT" );
-	int port = env ? atoi( env ) : 4938;
-
-	if( port <= 0 )
-		return; // VGUI_EVENT_PORT=0 disables the server
-
-#ifdef _WIN32
-	WSADATA wsa;
-
-	if( WSAStartup( MAKEWORD( 2, 2 ), &wsa ))
-		return;
-#endif
-
-	SDL_Thread *thread = SDL_CreateThread( EventServerThread, "eventserver", (void *)(intptr_t)port );
+	SDL_Thread *thread = SDL_CreateThread( EventServerThread, "eventserver", (void *)(intptr_t)server );
 
 	SDL_DetachThread( thread );
+	return true;
 }

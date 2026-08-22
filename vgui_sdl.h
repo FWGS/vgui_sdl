@@ -190,7 +190,7 @@ private:
 //
 // sdl_eventserver.cpp
 //
-void EventServer_Start( void );
+bool EventServer_Start( void );
 
 //
 // sdl_app.cpp: Ctrl+B toggles every registered BuildGroup (VGUI's

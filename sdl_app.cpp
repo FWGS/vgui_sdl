@@ -535,7 +535,14 @@ int main( int argc, char *argv[] )
 	signal( SIGUSR1, ScreenshotSignalHandler );
 #endif
 
-	EventServer_Start();
+	// fatal in headless: without the event server there is no way to drive or
+	// screenshot the app, and a taken port would mean cross-talk with another
+	// instance (e.g. a parallel test run)
+	if( !EventServer_Start())
+	{
+		printf( "Fatal: event server could not start (port in use?)\n" );
+		return EXIT_FAILURE;
+	}
 
 	if( !app.InitSDL())
 		return EXIT_FAILURE;
