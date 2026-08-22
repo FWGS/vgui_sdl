@@ -31,9 +31,12 @@
 
 using namespace vgui;
 
-// global runtime state, xash3d-fwgs style: read and written directly.
+// global runtime state, xash3d-fwgs style: read and written directly. state
+// that needs side effects on change keeps a Sys_* setter (Sys_SetRenderScale);
+// everything else is a plain field.
 struct host_s
 {
+	int scale = 1;                              // -scale N nearest render scale, always >=1
 	volatile sig_atomic_t screenshotRequested = 0; // set by SIGUSR1/event server, serviced in swapBuffers
 };
 
@@ -142,6 +145,10 @@ public:
 //
 SDL_Window *Sys_GetWindow( void );
 SDL_Renderer *Sys_GetRenderer( void );
+
+// keeps a setter because changing it has side effects beyond the field;
+// host.scale itself is read directly everywhere else.
+void Sys_SetRenderScale( int scale );  // clamps to >=1
 
 //
 // controls/taskbar.cpp

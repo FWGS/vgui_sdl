@@ -367,8 +367,14 @@ public:
 			switch( ev.type )
 			{
 			case SDL_EVENT_MOUSE_MOTION:
-				internalCursorMoved( (int)ev.motion.x, (int)ev.motion.y, surface );
+			{
+				// window-local pixels down to the logical coordinate space
+				int lx = (int)ev.motion.x / host.scale;
+				int ly = (int)ev.motion.y / host.scale;
+
+				internalCursorMoved( lx, ly, surface );
 				break;
+			}
 			case SDL_EVENT_QUIT:
 				SDL_Quit();
 				exit( 0 );
@@ -481,6 +487,13 @@ int main( int argc, char *argv[] )
 
 	if( !Sys_GetIntFromCmdLine( "-height", &height ))
 		height = 480;
+
+	int scale;
+
+	if( !Sys_GetIntFromCmdLine( "-scale", &scale ))
+		scale = 1;
+
+	Sys_SetRenderScale( scale );
 
 #ifndef _WIN32
 	signal( SIGUSR1, ScreenshotSignalHandler );

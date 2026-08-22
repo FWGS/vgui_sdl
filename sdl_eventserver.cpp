@@ -104,9 +104,13 @@ static void push_motion( int x, int y )
 {
 	SDL_Event ev = {};
 
+	// clients post logical coords; scale up to window pixels so platTick's
+	// divide-by-scale lands back on the same logical point
+	int scale = host.scale;
+
 	ev.type = SDL_EVENT_MOUSE_MOTION;
-	ev.motion.x = (float)x;
-	ev.motion.y = (float)y;
+	ev.motion.x = (float)( x * scale );
+	ev.motion.y = (float)( y * scale );
 	SDL_PushEvent( &ev );
 }
 

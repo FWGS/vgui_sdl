@@ -10,6 +10,14 @@
 static SDL_Window *s_window;
 static SDL_Renderer *s_renderer;
 
+// host.scale: integer nearest-neighbour render scale (-scale N). VGUI keeps
+// drawing in its logical coordinate space; the window is N times larger and
+// SDL_SetRenderScale upscales. Input coords are divided back down. Clamped >=1.
+void Sys_SetRenderScale( int scale )
+{
+	host.scale = scale > 1 ? scale : 1;
+}
+
 SDL_FRect SDLSurface::rect( int x0, int y0, int x1, int y1 )
 {
 	SDL_FRect frect = { (float)( x0 + origin[0] ), (float)( y0 + origin[1] ), (float)( x1 - x0 ), (float)( y1 - y0 ) };
@@ -51,11 +59,19 @@ bool SDLSurface::CreateWindow()
 	int wide, tall;
 	getPanel()->getSize( wide, tall );
 
-	if( !SDL_CreateWindowAndRenderer( "test", wide, tall, 0, &window, &renderer ))
+	// the window is host.scale times the logical size; VGUI still draws at the
+	// logical size and SDL_SetRenderScale stretches it to fill the window
+	if( !SDL_CreateWindowAndRenderer( "test", wide * host.scale, tall * host.scale, 0, &window, &renderer ))
 	{
 		printf( "Can't create SDL window and surface: %s\n", SDL_GetError());
 		return false;
 	}
+
+	if( host.scale > 1 )
+		SDL_SetRenderScale( renderer, (float)host.scale, (float)host.scale );
+
+	// nearest keeps the bitmap fonts and icons crisp under any scaling
+	SDL_SetDefaultTextureScaleMode( renderer, SDL_SCALEMODE_NEAREST );
 
 	s_window = window;
 	s_renderer = renderer;
@@ -100,6 +116,10 @@ bool SDLSurface::isWithin( int x, int y )
 
 	SDL_GetWindowSizeInPixels( window, &w, &h );
 
+	// x, y are logical; the window is host.scale times larger
+	w /= host.scale;
+	h /= host.scale;
+
 	return x >= 0 && x < w && y >= 0 && y < h;
 }
 
@@ -117,8 +137,9 @@ void SDLSurface::GetMousePos( int &x, int &y )
 	SDL_GetGlobalMouseState( &fx, &fy );
 	SDL_GetWindowPosition( window, &wx, &wy );
 
-	x = (int)fx - wx;
-	y = (int)fy - wy;
+	// window-local pixels down to the logical coordinate space
+	x = ( (int)fx - wx ) / host.scale;
+	y = ( (int)fy - wy ) / host.scale;
 }
 
 void SDLSurface::addModeInfo( int wide, int tall, int bpp )
